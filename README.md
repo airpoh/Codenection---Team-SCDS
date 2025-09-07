@@ -1,22 +1,23 @@
 # Codenection---Team-SCDS
-Track 1: Student Lifestyle
+Track 1: Student Lifestyle 
 Problem Statement: Mental Health Support For Students
 
 Prototype Figma Link:
 https://www.figma.com/design/DxEMn6baoYMZQhTvCTKq6r/Code-Nections?node-id=0-1&t=Hpn5lPMdNR5LKFyM-1
 
 UniMate - Mental Health Support App
-Our Vision:
+
+Our Vision: 
 No stigma, More fun, Real support, built into everyday student life.
 
 Problems to Address:
-University students face immense pressure from Academic deadlines,  Financial burdens, Future uncertainty
+University students face immense pressure from Academic deadlines, Financial burdens, Future uncertainty
 
 Prototype Features:
 Tab 1 — Home (Calendar & Smart Reminders)
-Purpose: proactive planning to reduce stress.
-Calendar Schedule: month header, today pill, list of upcoming items (assignment, exam, club).
-Smart Reminders: medicines, bedtime, meeting.
+ Purpose: proactive planning to reduce stress.
+ Calendar Schedule: month header, today pill, list of upcoming items (assignment, exam, club).
+ Smart Reminders: medicines, bedtime, meeting.
 
 Tab 2 — Island (Main Map Navigation)
 Full-screen island map with roads and tap-able buildings (wood plaque labels). Top-right Coins total (user points). Buildings → Features:
