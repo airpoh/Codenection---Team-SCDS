@@ -14,13 +14,13 @@ Problems to Address:
 University students face immense pressure from Academic deadlines, Financial burdens, Future uncertainty
 
 Prototype Features:
-Tab 1 — Home (Calendar & Smart Reminders)
 
+Tab 1 — Home (Calendar & Smart Reminders):
 Purpose: proactive planning to reduce stress.
 Calendar Schedule: month header, today pill, list of upcoming items (assignment, exam, club).
 Smart Reminders: medicines, bedtime, meeting.
 
-Tab 2 — Island (Main Map Navigation)
+Tab 2 — Island (Main Map Navigation):
 Full-screen island map with roads and tap-able buildings (wood plaque labels). Top-right Coins total (user points). Buildings → Features:
 Diary Cabin → Journal (emoji mood + short note, Mood Calendar Review).
 Community Cafe → Community (Friends Streaks rings, Community Wall with tags).
@@ -29,7 +29,7 @@ Lighthouse → Hotline Call (Emergency); show campus/local numbers and resource 
 Meditation Store → Meditation Music with different kind of themes
 Reward Market → Rewards (redeem vouchers & “how to earn” tasks). 
 
-Tab 3 — Profile
+Tab 3 — Profile:
 Avatar, mood, name, university email.
 Summary & View Market
 Profile Settings
@@ -37,16 +37,17 @@ Notifications and Live Location
 Log out
 
 4 Unique Selling Points (USPs):
-1. Student-first Gamified Design
+1. Student-first Gamified Design:
 UniMate uses an island interface with buildings as features. This reduces stigma, feels playful, and encourages students to come back daily, not out of obligation but curiosity and fun.
-2. Off-Chain Support Token Economy
+2. Off-Chain Support Token Economy:
 Every healthy action earns tokens. These can be redeemed for real campus perks like café vouchers, and even counselling passes. We turn self-care into tangible rewards, building a cycle of positive reinforcement
-3. Complete Mental-Health Toolkit
+3. Complete Mental-Health Toolkit:
 From guided meditation and first-aid guides, to SOS safety alerts, mood journaling, and peer communities, UniMate offers a full spectrum of support in one place
-4. Feelings Hub (Reflect & Connect)
+4. Feelings Hub (Reflect & Connect):
 Here, students can privately journal, share anonymously in Communities, and send Quick Pings to friends. Everything is moderated, safe, and stigma-free — making it easy for students to both express and receive support.
 
 Tech Stack (Implement Phase):
+
 1. Flutter (Dart):
 Flutter 3 + Riverpod: UI/state for calendar, coins, community, player.
 Dio: HTTP to FastAPI/Supabase REST.
@@ -55,7 +56,8 @@ flutter_local_notifications: local schedule for medicines/bedtime/meetings.
 just_audio: meditation playback (background).
 url_launcher: tap-to-call campus/national hotlines.
 local_auth + flutter_secure_storage: app lock + secure token storage.
-2. Backend:
+
+3. Backend:
 FastAPI + Pydantic:
 Coins/Rewards ledger & redemptions
 Challenge cooldowns & validation
@@ -66,6 +68,7 @@ Postgres: users, events, reminders, journal, posts, coins_ledger, rewards, redem
 Realtime: Community feed/likes.
 Storage: audio files, optional covers.
 Auth: tokens verified by FastAPI; no custom JWT.
-3. Hosting:
+
+5. Hosting:
 Supabase project (DB/Realtime/Storage/Auth).
 Render/Railway for FastAPI (containerized).
