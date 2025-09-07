@@ -15,9 +15,10 @@ University students face immense pressure from Academic deadlines, Financial bur
 
 Prototype Features:
 Tab 1 — Home (Calendar & Smart Reminders)
- Purpose: proactive planning to reduce stress.
- Calendar Schedule: month header, today pill, list of upcoming items (assignment, exam, club).
- Smart Reminders: medicines, bedtime, meeting.
+
+Purpose: proactive planning to reduce stress.
+Calendar Schedule: month header, today pill, list of upcoming items (assignment, exam, club).
+Smart Reminders: medicines, bedtime, meeting.
 
 Tab 2 — Island (Main Map Navigation)
 Full-screen island map with roads and tap-able buildings (wood plaque labels). Top-right Coins total (user points). Buildings → Features:
