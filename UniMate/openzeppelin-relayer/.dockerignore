@@ -1,0 +1,8 @@
+# ignore all .git files and directories
+.git*
+target/
+logs/
+docs/
+
+# plugins dependencies
+plugins/**/node_modules

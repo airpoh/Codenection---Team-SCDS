@@ -1,0 +1,43 @@
+{
+  "networks": [
+    {
+      "average_blocktime_ms": 5000,
+      "chain_id": 324,
+      "explorer_urls": [
+        "https://api-era.zksync.network/api",
+        "https://era.zksync.network"
+      ],
+      "is_testnet": false,
+      "network": "zk-sync",
+      "required_confirmations": 1,
+      "rpc_urls": [
+        "https://mainnet.era.zksync.io",
+        "https://zksync.drpc.org",
+        "https://1rpc.io/zksync2-era"
+      ],
+      "symbol": "ETH",
+      "tags": [
+        "rollup"
+      ],
+      "type": "evm"
+    },
+    {
+      "from": "zk-sync",
+      "type": "evm",
+      "network": "zk-sync-testnet",
+      "chain_id": 300,
+      "explorer_urls": [
+        "https://api-sepolia-era.zksync.network/api",
+        "https://sepolia-era.zksync.network"
+      ],
+      "is_testnet": true,
+      "rpc_urls": [
+        "https://sepolia.era.zksync.dev"
+      ],
+      "tags": [
+        "deprecated",
+        "rollup"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "networks": [
+    {
+      "average_blocktime_ms": 2000,
+      "chain_id": 5000,
+      "explorer_urls": [
+        "https://explorer.mantle.xyz/api",
+        "https://explorer.mantle.xyz"
+      ],
+      "features": [
+        "eip1559"
+      ],
+      "is_testnet": false,
+      "network": "mantle",
+      "required_confirmations": 1,
+      "rpc_urls": [
+        "https://rpc.mantle.xyz",
+        "https://mantle.drpc.org",
+        "https://1rpc.io/mantle",
+        "https://mantle-rpc.publicnode.com",
+        "https://mantle-public.nodies.app"
+      ],
+      "symbol": "MNT",
+      "tags": [
+        "rollup"
+      ],
+      "type": "evm"
+    },
+    {
+      "from": "mantle",
+      "type": "evm",
+      "network": "mantle-sepolia",
+      "chain_id": 5003,
+      "explorer_urls": [
+        "https://explorer.sepolia.mantle.xyz/api",
+        "https://explorer.sepolia.mantle.xyz"
+      ],
+      "is_testnet": true,
+      "rpc_urls": [
+        "https://rpc.sepolia.mantle.xyz"
+      ],
+      "tags": [
+        "deprecated",
+        "rollup"
+      ]
+    }
+  ]
+}
