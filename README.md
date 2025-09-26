@@ -48,27 +48,41 @@ Here, students can privately journal, share anonymously in Communities, and send
 
 Tech Stack (Implement Phase):
 
-1. Flutter (Dart):
-Flutter 3 + Riverpod: UI/state for calendar, coins, community, player.
-Dio: HTTP to FastAPI/Supabase REST.
-supabase_flutter: Auth (email/magic link), Realtime (Community feed), Storage (media), Postgres access.
-flutter_local_notifications: local schedule for medicines/bedtime/meetings.
-just_audio: meditation playback (background).
-url_launcher: tap-to-call campus/national hotlines.
-local_auth + flutter_secure_storage: app lock + secure token storage.
+Frontend (Mobile)
+React Native (Expo) — cross-platform UI
+TypeScript — typed app code
+React Navigation — stacks, tabs, deep links
+React Native Reanimated — smooth interactions
+Storage: AsyncStorage 
+Realtime: WebSocket (Supabase Realtime where applicable)
+Theming & Icons: Expo vector icons, custom font loading
+Build/Dev: Expo CLI, EAS Build/Submit/Updates
 
-3. Backend:
-FastAPI + Pydantic:
-Coins/Rewards ledger & redemptions
-Challenge cooldowns & validation
-Rule-based care suggestions (from schedules/journal patterns)
-Moderation flags (mark-for-review)
-Supabase:
-Postgres: users, events, reminders, journal, posts, coins_ledger, rewards, redemptions, hotlines.
-Realtime: Community feed/likes.
-Storage: audio files, optional covers.
-Auth: tokens verified by FastAPI; no custom JWT.
+Backend
+FastAPI (Python 3.11+) — REST & WebSocket
+Pydantic — request/response models & validation
+Uvicorn — ASGI server
+Task Queue (optional): Celery/RQ
+Auth: Supabase Auth tokens verified by FastAPI (no custom JWT)
 
-5. Hosting:
-Supabase project (DB/Realtime/Storage/Auth).
-Render/Railway for FastAPI (containerized).
+Blockchain
+Network: Polygon Amoy testnet (EVM)
+Smart Contracts: Solidity 0.8.x
+Frameworks: Hardhat, TypeChain
+Libraries: OpenZeppelin Contracts
+Relayer/Automation: OpenZeppelin Defender Relayer (gasless UX)
+Client: web3.py (backend) 
+Standards: ERC-20 (WELL token), ERC-1155 (achievements/rewards)
+
+Data & Platform Services (Supabase)
+Postgres: users, events, reminders, journal, posts, coins_ledger, rewards, redemptions, hotlines
+Realtime: community feed/likes
+Storage: audio files + covers
+Auth: session tokens verified by FastAPI
+
+Deployment / Hosting
+Mobile: Expo EAS Build → TestFlight / Play Console
+Backend: Railway / Render (containerized FastAPI)
+Supabase: DB / Realtime / Storage / Auth
+CD/CI: GitHub Actions (mobile & API pipelines)
+Observability: Sentry (mobile & server), structured API logs
