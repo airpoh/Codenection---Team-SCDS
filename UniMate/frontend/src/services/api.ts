@@ -1,16 +1,5 @@
-export const API_BASE_URL = "https://codenection-team-scds.onrender.com";
-
-// API service for UniMate frontend
-// Development configuration
-const DEVELOPMENT_CONFIG = {
-  // For physical devices/simulators, use your computer's actual IP address
-  MOBILE_IP: 'http://192.168.1.39:8000',
-  // For web development, use localhost
-  WEB_LOCALHOST: 'http://localhost:8000',
-};
-
-// Automatically detect environment and use appropriate URL
-const API_BASE_URL = DEVELOPMENT_CONFIG.MOBILE_IP; // Change to WEB_LOCALHOST for web testing
+export const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || "https://codenection-team-scds.onrender.com";
 
 export interface User {
   id: string;
