@@ -1,3 +1,5 @@
+export const API_BASE_URL = "https://codenection-team-scds.onrender.com";
+
 // API service for UniMate frontend
 // Development configuration
 const DEVELOPMENT_CONFIG = {
