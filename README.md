@@ -2,6 +2,142 @@
 Track 1: Student Lifestyle 
 Problem Statement: Mental Health Support For Students
 
+UniMate – User Guide for Testers
+
+Welcome to UniMate! This guide will walk you through installing, logging in, and trying out the main features of our app.
+
+1. Installation
+
+Install Expo Go
+
+On Android: Open Google Play → search for Expo Go → Install.
+
+On iOS: Open App Store → search for Expo Go → Install.
+
+Scan the QR Code (From Camera)
+
+<img width="287" height="285" alt="image" src="https://github.com/user-attachments/assets/500d9099-f6ae-4fd1-a6a1-c48cc2e1f523" />
+
+Open the Expo Go app on your phone.
+
+Use the built-in scanner to scan the QR code we provide (from our Expo project page).
+
+The UniMate app will load inside Expo Go.
+
+✅ You don’t need to install anything else—the app runs directly from our published code.
+
+2. Sign Up / Log In
+
+Open the app, tap Sign Up.
+
+Enter your details:
+
+Name
+
+Student Email
+
+Password (and confirm)
+
+Submit → your account will be created.
+
+Next time, use Log In with your email & password.
+
+ℹ️ If you already have an account, skip sign-up and just log in.
+
+3. Main Features to Test
+🏝 Island Home
+
+This is your main hub.
+
+At the top right, you’ll see your total coins (earned from challenges, tasks, and login streaks).
+
+Tap different buildings to enter feature areas:
+
+Reward Market
+
+My Rewards
+
+Challenge Gym
+
+Profile
+
+Lighthouse (Emergency)
+
+🎁 Reward Market
+
+Shows your total coins and today’s earnings.
+
+Two tabs:
+
+Earn → shows actions you can complete (e.g., Login the app, Add a task, Add a reminder, Set mood today, Complete daily challenges).
+
+Redeem → spend your coins on vouchers.
+
+Actions completed turn light purple with a strike-through to indicate you already earned them for today.
+
+🎟 My Rewards
+
+See vouchers you have redeemed.
+
+Each voucher shows a “Use Now” button.
+
+After using, your voucher count decreases and Today’s Redeems increases.
+
+🏋 Challenge Gym
+
+Complete daily challenges to earn coins:
+
+1 daily challenge = +5 coins
+
+3 daily challenges = +10 coins
+
+Coins are added automatically to your balance in Reward Market.
+
+Completed challenges can only reward coins once per day.
+
+📅 Calendar
+
+Create tasks and reminders.
+
+Add a task → you’ll see coins rewarded in Reward Market.
+
+Add a reminder → also earns coins once per day.
+
+😊 Profile
+
+View and edit your details:
+
+Name, phone number, address (editable)
+
+Student email (view only)
+
+Upload or update your avatar.
+
+Select your mood (Thriving, Good, Okay, Stressed, Tired, Down, SOS).
+
+Saving your mood once per day gives +5 coins.
+
+At the top of your profile you’ll see:
+
+Day streak → how many consecutive days you’ve logged in.
+
+Coins → synced with Reward Market.
+
+Challenges completed → shows your gym progress.
+
+🚨 Lighthouse (Emergency)
+
+Choose the type of emergency (Accident, Chest pain, Fire, etc.).
+
+View your Trusted Contacts list.
+
+Each contact has:
+
+WhatsApp button → opens WhatsApp with a prefilled emergency message.
+
+Call button → starts a direct phone call.
+
+
 Prototype Figma Link:
 https://www.figma.com/design/DxEMn6baoYMZQhTvCTKq6r/Code-Nections?node-id=0-1&t=Hpn5lPMdNR5LKFyM-1
 
