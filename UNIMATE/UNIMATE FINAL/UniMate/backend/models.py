@@ -329,7 +329,7 @@ class SmartAccountInfo(Base):
     updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("NOW()"))
 
     # Relationships
-    user = relationship("Profile")
+    user = relationship("Profile", back_populates="smart_account")
 
 
 # ===================================================================
