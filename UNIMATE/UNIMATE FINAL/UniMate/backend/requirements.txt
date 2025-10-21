@@ -36,6 +36,9 @@ backports.zoneinfo>=0.2.1; python_version < "3.9"
 # Logging and monitoring
 structlog>=23.0.0
 
+# Task scheduling for notifications
+apscheduler>=3.10.0
+
 # Blockchain integration (required for your project)
 web3>=6.0.0
 eth-account>=0.8.0
