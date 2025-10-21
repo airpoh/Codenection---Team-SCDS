@@ -11,7 +11,7 @@ from pathlib import Path
 # Add the current directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from models import init_database, DATABASE_SCHEMA, engine
+from models import init_database, engine
 from sqlalchemy import text
 
 # Setup logging
@@ -24,10 +24,19 @@ logger = logging.getLogger(__name__)
 def create_tables_with_sql():
     """使用原生SQL创建表（如果SQLAlchemy创建失败）"""
     try:
+        # Read schema from schema.sql file
+        schema_file = Path(__file__).parent / "schema.sql"
+        if not schema_file.exists():
+            logger.error("schema.sql file not found")
+            return False
+
+        with open(schema_file, 'r') as f:
+            schema_sql = f.read()
+
         with engine.connect() as conn:
             # Split schema into individual statements
-            statements = [stmt.strip() for stmt in DATABASE_SCHEMA.split(';') if stmt.strip()]
-            
+            statements = [stmt.strip() for stmt in schema_sql.split(';') if stmt.strip()]
+
             for statement in statements:
                 if statement:
                     try:
@@ -35,7 +44,7 @@ def create_tables_with_sql():
                         logger.info(f"Executed: {statement[:50]}...")
                     except Exception as e:
                         logger.warning(f"Statement failed (may already exist): {e}")
-            
+
             conn.commit()
             logger.info("Database schema created successfully using SQL")
             return True
