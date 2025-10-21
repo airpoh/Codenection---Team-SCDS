@@ -1,0 +1,8 @@
+
+# HashiCorp Vault (do not commit secrets!)
+vault-credentials.txt
+vault-data/
+.env.vault
+vault-pid.txt
+vault-server.log
+vault-config.hcl

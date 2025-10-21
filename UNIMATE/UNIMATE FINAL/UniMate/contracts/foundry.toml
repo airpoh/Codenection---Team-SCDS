@@ -1,0 +1,17 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.24"
+evm_version  = "paris"
+
+remappings = [
+  "@openzeppelin/=lib/openzeppelin-contracts/",
+  "forge-std/=lib/forge-std/src/"
+]
+
+[rpc_endpoints]
+amoy = "https://rpc-amoy.polygon.technology/"
+
+[etherscan]
+amoy = { key = "${9s6JpeR3Amlb2F1bIlrhEajnB6hTTWsf}" }

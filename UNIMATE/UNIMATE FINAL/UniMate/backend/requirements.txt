@@ -1,0 +1,67 @@
+# FastAPI and ASGI server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Authentication and security
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-multipart>=0.0.6
+
+# HTTP client
+httpx>=0.25.0
+
+# Database and ORM
+sqlalchemy>=2.0.0
+# PostgreSQL driver - try different options for compatibility
+psycopg2-binary>=2.9.0; platform_system != "Darwin" or platform_machine != "arm64"
+psycopg2>=2.9.0; platform_system == "Darwin" and platform_machine == "arm64"
+
+# Data validation
+pydantic>=2.0.0
+email-validator>=2.0.0
+
+# Environment and configuration
+python-dotenv>=1.0.0
+
+# Rate limiting
+slowapi>=0.1.9
+
+# Date and time handling
+python-dateutil>=2.8.0
+tzdata>=2023.3
+
+# Timezone support (for zoneinfo fallback)
+backports.zoneinfo>=0.2.1; python_version < "3.9"
+
+# Logging and monitoring
+structlog>=23.0.0
+
+# Blockchain integration (required for your project)
+web3>=6.0.0
+eth-account>=0.8.0
+
+# Additional dependencies for your blockchain functionality
+requests>=2.28.0
+pycryptodome>=3.15.0
+
+# Cryptographic libraries for private key encryption
+cryptography>=41.0.0
+
+# HashiCorp Vault integration for secure secret management
+hvac>=2.1.0
+tenacity>=8.2.0  # Retry mechanism for network resilience
+
+# Redis for persistent caching and rate limiting
+redis>=5.0.0
+
+# Development tools (optional but recommended)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+isort>=5.12.0
+
+# Additional required packages found in codebase
+pathlib2>=2.3.0; python_version < "3.4"
+typing-extensions>=4.0.0; python_version < "3.8"
+
+# Note: asyncio, uuid, json, time, secrets, hmac, hashlib are all built into Python

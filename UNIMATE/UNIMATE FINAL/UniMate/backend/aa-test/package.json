@@ -1,0 +1,26 @@
+{
+  "name": "unimate-erc4337-executor",
+  "version": "1.0.0",
+  "description": "ERC-4337 batch transaction executor using Biconomy SDK",
+  "main": "execute-batch.js",
+  "type": "module",
+  "scripts": {
+    "test": "node execute-batch.js",
+    "mint": "node mint-gasless.js",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "@biconomy/account": "^4.6.3",
+    "dotenv": "^16.3.1",
+    "tslib": "^2.8.1",
+    "viem": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "UniMate Team",
+  "license": "MIT"
+}

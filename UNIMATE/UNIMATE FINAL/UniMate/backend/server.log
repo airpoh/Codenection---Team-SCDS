@@ -1,0 +1,148 @@
+INFO:     Will watch for changes in these directories: ['/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [5206] using StatReload
+Database models not available, using direct SQL queries
+2025-10-21 16:57:31,482 - models - INFO - ✅ Database tables initialized successfully
+2025-10-21 16:57:31,483 - models - INFO -    Connected to: aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend/routers/blockchain.py:3123: SAWarning: relationship 'SmartAccountInfo.user' will copy column profiles.id to column smart_account_info.user_id, which conflicts with relationship(s): 'Profile.smart_account' (copies profiles.id to smart_account_info.user_id). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="smart_account"' to the 'SmartAccountInfo.user' relationship. (Background on this warning at: https://sqlalche.me/e/20/qzyx) (This warning originated from the `configure_mappers()` process, which was invoked automatically in response to a user-initiated operation.)
+  existing_count = session.query(Challenge).count()
+2025-10-21 16:57:31,603 - routers.challenges - INFO - ✅ Blockchain integration enabled for challenges
+2025-10-21 16:57:31,621 - app - INFO - Blockchain router loaded successfully
+INFO:     Started server process [5221]
+INFO:     Waiting for application startup.
+2025-10-21 16:57:32,042 - models - INFO - ✅ Database tables initialized successfully
+2025-10-21 16:57:32,042 - models - INFO -    Connected to: aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+2025-10-21 16:57:32,063 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-21 16:57:32,063 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-21 16:57:32,064 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-21 16:57:32,064 - apscheduler.scheduler - INFO - Added job "Daily Point Reconciliation (Biconomy)" to job store "default"
+2025-10-21 16:57:32,064 - apscheduler.scheduler - INFO - Added job "Task Reminder Notifications" to job store "default"
+2025-10-21 16:57:32,064 - apscheduler.scheduler - INFO - Added job "Reminder Notifications" to job store "default"
+2025-10-21 16:57:32,064 - apscheduler.scheduler - INFO - Scheduler started
+2025-10-21 16:57:32,064 - app - INFO - ✅ Scheduled jobs started successfully
+2025-10-21 16:57:32,064 - app - INFO -    - Daily reconciliation (Biconomy): 00:00 UTC
+2025-10-21 16:57:32,064 - app - INFO -    - Converts off-chain points → on-chain WELL tokens
+2025-10-21 16:57:32,064 - app - INFO -    - Task reminders: Every 1 minute
+2025-10-21 16:57:32,064 - app - INFO -    - Reminder notifications: Every 1 minute
+INFO:     Application startup complete.
+2025-10-21 16:58:32,063 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 16:59:32 +08)" (scheduled at 2025-10-21 16:58:32.063504+08:00)
+2025-10-21 16:58:32,134 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 16:59:32 +08)" executed successfully
+2025-10-21 16:58:32,134 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 16:59:32 +08)" (scheduled at 2025-10-21 16:58:32.064001+08:00)
+2025-10-21 16:58:32,204 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 16:59:32 +08)" executed successfully
+2025-10-21 16:59:07,324 - routers.notifications - INFO - ✅ Updated existing push token for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+INFO:     10.72.117.240:55002 - "POST /notifications/register-token HTTP/1.1" 200 OK
+2025-10-21 16:59:27,519 - httpx - INFO - HTTP Request: POST https://ofjrucbezyohtnqsycko.supabase.co/auth/v1/token?grant_type=password "HTTP/1.1 200 OK"
+2025-10-21 16:59:27,519 - routers.core - INFO - Login points task created for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+2025-10-21 16:59:27,692 - scripts.add_activity_logging - INFO - ✅ Retrieved 24 activity logs for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+2025-10-21 16:59:27,710 - routers.rewards - INFO - Action login already completed today for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+INFO:     10.72.117.240:55003 - "POST /auth/login HTTP/1.1" 200 OK
+2025-10-21 16:59:28,032 - routers.rewards - INFO - 🕐 Checking Daily Habits for Malaysia date: 2025-10-21
+2025-10-21 16:59:28,032 - routers.rewards - INFO - 🕐 UTC range: 2025-10-20 16:00:00+00:00 to 2025-10-21 16:00:00+00:00
+2025-10-21 16:59:28,107 - routers.rewards - INFO - 🏆 Challenges completed today: 2 challenges, 100 points
+2025-10-21 16:59:28,107 - routers.rewards - INFO - ✅ Daily habits: Login +5 points
+2025-10-21 16:59:28,166 - routers.rewards - INFO - 📋 Found 1 tasks created today
+2025-10-21 16:59:28,167 - routers.rewards - INFO - ✅ Daily habits: Added 1 tasks +5 points
+2025-10-21 16:59:28,199 - routers.rewards - INFO - 🔔 Found 0 reminders created today
+2025-10-21 16:59:28,241 - routers.rewards - INFO - 😊 Mood set today: True
+2025-10-21 16:59:28,241 - routers.rewards - INFO - ✅ Daily habits: Set mood today +5 points
+2025-10-21 16:59:28,241 - routers.rewards - INFO - 💰 Total daily habits points: 15
+2025-10-21 16:59:28,241 - routers.rewards - INFO - 🎯 FINAL CALCULATION: Challenges=100 + Daily Habits=15 = Total=115
+2025-10-21 16:59:28,241 - routers.rewards - INFO - 💎 Database total_points: 795
+2025-10-21 16:59:28,241 - routers.rewards - INFO - 💎 Database earned_today (from DB): 120
+2025-10-21 16:59:28,241 - routers.rewards - INFO - 📊 DISPLAY VALUES: total=795, earned_today=115
+INFO:     10.72.117.240:55003 - "GET /rewards/points HTTP/1.1" 200 OK
+2025-10-21 16:59:28,347 - routers.rewards - INFO - 🕐 Checking Daily Habits for Malaysia date: 2025-10-21
+2025-10-21 16:59:28,347 - routers.rewards - INFO - 🕐 UTC range: 2025-10-20 16:00:00+00:00 to 2025-10-21 16:00:00+00:00
+2025-10-21 16:59:28,419 - routers.rewards - INFO - 🏆 Challenges completed today: 2 challenges, 100 points
+2025-10-21 16:59:28,420 - routers.rewards - INFO - ✅ Daily habits: Login +5 points
+2025-10-21 16:59:28,493 - routers.rewards - INFO - 📋 Found 1 tasks created today
+2025-10-21 16:59:28,493 - routers.rewards - INFO - ✅ Daily habits: Added 1 tasks +5 points
+2025-10-21 16:59:28,513 - routers.rewards - INFO - 🔔 Found 0 reminders created today
+2025-10-21 16:59:28,532 - routers.rewards - INFO - 😊 Mood set today: True
+2025-10-21 16:59:28,532 - routers.rewards - INFO - ✅ Daily habits: Set mood today +5 points
+2025-10-21 16:59:28,532 - routers.rewards - INFO - 💰 Total daily habits points: 15
+2025-10-21 16:59:28,532 - routers.rewards - INFO - 🎯 FINAL CALCULATION: Challenges=100 + Daily Habits=15 = Total=115
+2025-10-21 16:59:28,533 - routers.rewards - INFO - 💎 Database total_points: 795
+2025-10-21 16:59:28,533 - routers.rewards - INFO - 💎 Database earned_today (from DB): 120
+2025-10-21 16:59:28,533 - routers.rewards - INFO - 📊 DISPLAY VALUES: total=795, earned_today=115
+INFO:     10.72.117.240:55007 - "GET /rewards/points HTTP/1.1" 200 OK
+2025-10-21 16:59:30,706 - unimate-profile - INFO - Returning profile for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48: name='Tay Pin Quan', email='dsc2209681@xmu.edu.my'
+INFO:     10.72.117.240:55003 - "GET /users/profile HTTP/1.1" 200 OK
+2025-10-21 16:59:30,794 - routers.rewards - INFO - 🕐 Checking Daily Habits for Malaysia date: 2025-10-21
+2025-10-21 16:59:30,794 - routers.rewards - INFO - 🕐 UTC range: 2025-10-20 16:00:00+00:00 to 2025-10-21 16:00:00+00:00
+2025-10-21 16:59:30,844 - routers.rewards - INFO - 🏆 Challenges completed today: 2 challenges, 100 points
+2025-10-21 16:59:30,845 - routers.rewards - INFO - ✅ Daily habits: Login +5 points
+2025-10-21 16:59:30,861 - routers.rewards - INFO - 📋 Found 1 tasks created today
+2025-10-21 16:59:30,862 - routers.rewards - INFO - ✅ Daily habits: Added 1 tasks +5 points
+2025-10-21 16:59:30,877 - routers.rewards - INFO - 🔔 Found 0 reminders created today
+2025-10-21 16:59:30,894 - routers.rewards - INFO - 😊 Mood set today: True
+2025-10-21 16:59:30,894 - routers.rewards - INFO - ✅ Daily habits: Set mood today +5 points
+2025-10-21 16:59:30,894 - routers.rewards - INFO - 💰 Total daily habits points: 15
+2025-10-21 16:59:30,894 - routers.rewards - INFO - 🎯 FINAL CALCULATION: Challenges=100 + Daily Habits=15 = Total=115
+2025-10-21 16:59:30,894 - routers.rewards - INFO - 💎 Database total_points: 795
+2025-10-21 16:59:30,894 - routers.rewards - INFO - 💎 Database earned_today (from DB): 120
+2025-10-21 16:59:30,894 - routers.rewards - INFO - 📊 DISPLAY VALUES: total=795, earned_today=115
+INFO:     10.72.117.240:55003 - "GET /rewards/points HTTP/1.1" 200 OK
+INFO:     10.72.117.240:55003 - "GET /challenges/daily HTTP/1.1" 200 OK
+INFO:     10.72.117.240:55003 - "GET /tasks HTTP/1.1" 200 OK
+2025-10-21 16:59:32,064 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:00:32 +08)" (scheduled at 2025-10-21 16:59:32.063504+08:00)
+2025-10-21 16:59:32,133 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:00:32 +08)" executed successfully
+2025-10-21 16:59:32,133 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:00:32 +08)" (scheduled at 2025-10-21 16:59:32.064001+08:00)
+2025-10-21 16:59:32,197 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:00:32 +08)" executed successfully
+2025-10-21 16:59:32,216 - unimate-tasks - INFO - Building reminder: {'id': '4f68009d-c535-4a49-918b-0b0d6d6fbfd6', 'user_id': 'b2fbbe9b-b900-43ee-bf0a-d424b3115d48', 'title': 'Take medicine', 'description': '', 'reminder_time': '2025-10-13T16:05:00+00:00', 'repeat_type': 'once', 'is_active': True, 'created_at': '2025-10-14T15:05:22.166504+00:00', 'updated_at': '2025-10-14T15:05:22.166504+00:00'}
+2025-10-21 16:59:32,216 - unimate-tasks - INFO - Building reminder: {'id': '65f2489a-0bf3-4590-b16b-86f1b63feffa', 'user_id': 'b2fbbe9b-b900-43ee-bf0a-d424b3115d48', 'title': 'Volleyball Competition', 'description': '', 'reminder_time': '2025-10-25T00:00:00+00:00', 'repeat_type': 'once', 'is_active': True, 'created_at': '2025-10-20T07:52:16.650277+00:00', 'updated_at': '2025-10-20T07:52:16.650277+00:00'}
+2025-10-21 16:59:32,216 - unimate-tasks - INFO - Returning 2 reminders for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+INFO:     10.72.117.240:55007 - "GET /tasks/reminders HTTP/1.1" 200 OK
+2025-10-21 16:59:46,635 - unimate-tasks - INFO - Deleted task 37 for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+INFO:     10.72.117.240:55008 - "DELETE /tasks/37 HTTP/1.1" 200 OK
+2025-10-21 17:00:12,859 - unimate-tasks - INFO - Created task: Gym for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+2025-10-21 17:00:12,859 - unimate-tasks - INFO - Task creation points task created for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+2025-10-21 17:00:12,942 - scripts.add_activity_logging - INFO - ✅ Retrieved 24 activity logs for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+2025-10-21 17:00:12,958 - routers.rewards - INFO - Action add_task already completed today for user b2fbbe9b-b900-43ee-bf0a-d424b3115d48
+INFO:     10.72.117.240:55009 - "POST /tasks HTTP/1.1" 200 OK
+2025-10-21 17:00:32,063 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:01:32 +08)" (scheduled at 2025-10-21 17:00:32.063504+08:00)
+2025-10-21 17:00:32,659 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:01:32 +08)" (scheduled at 2025-10-21 17:00:32.064001+08:00)
+2025-10-21 17:00:32,914 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:01:32 +08)" executed successfully
+2025-10-21 17:00:33,240 - httpx - INFO - HTTP Request: POST https://exp.host/--/api/v2/push/send "HTTP/1.1 200 OK"
+2025-10-21 17:00:33,241 - services.push_notifications - ERROR - ❌ Failed to send push notification: 0
+2025-10-21 17:00:33,241 - services.notification_scheduler - WARNING - ❌ Failed to send task reminder: 0
+2025-10-21 17:00:33,241 - services.notification_scheduler - INFO - 📋 Task reminders: 0 sent, 1 errors
+2025-10-21 17:00:33,425 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:01:32 +08)" executed successfully
+2025-10-21 17:01:32,065 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:02:32 +08)" (scheduled at 2025-10-21 17:01:32.063504+08:00)
+2025-10-21 17:01:32,325 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:02:32 +08)" executed successfully
+2025-10-21 17:01:32,326 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:02:32 +08)" (scheduled at 2025-10-21 17:01:32.064001+08:00)
+2025-10-21 17:01:32,409 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:02:32 +08)" executed successfully
+2025-10-21 17:02:32,064 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:03:32 +08)" (scheduled at 2025-10-21 17:02:32.063504+08:00)
+2025-10-21 17:02:32,251 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:03:32 +08)" executed successfully
+2025-10-21 17:02:32,251 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:03:32 +08)" (scheduled at 2025-10-21 17:02:32.064001+08:00)
+2025-10-21 17:02:32,468 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:03:32 +08)" executed successfully
+2025-10-21 17:03:32,065 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:04:32 +08)" (scheduled at 2025-10-21 17:03:32.063504+08:00)
+2025-10-21 17:03:32,460 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:04:32 +08)" executed successfully
+2025-10-21 17:03:32,461 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:04:32 +08)" (scheduled at 2025-10-21 17:03:32.064001+08:00)
+2025-10-21 17:03:32,924 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:04:32 +08)" executed successfully
+2025-10-21 17:06:13,207 - apscheduler.executors.default - WARNING - Run time of job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:06:32 +08)" was missed by 0:00:41.143602
+2025-10-21 17:06:13,207 - apscheduler.executors.default - WARNING - Run time of job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:06:32 +08)" was missed by 0:00:41.143261
+2025-10-21 17:06:32,064 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:07:32 +08)" (scheduled at 2025-10-21 17:06:32.063504+08:00)
+2025-10-21 17:06:32,138 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:07:32 +08)" executed successfully
+2025-10-21 17:06:32,138 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:07:32 +08)" (scheduled at 2025-10-21 17:06:32.064001+08:00)
+2025-10-21 17:06:32,222 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:07:32 +08)" executed successfully
+2025-10-21 17:07:32,065 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:08:32 +08)" (scheduled at 2025-10-21 17:07:32.063504+08:00)
+2025-10-21 17:07:32,205 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:08:32 +08)" executed successfully
+2025-10-21 17:07:32,205 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:08:32 +08)" (scheduled at 2025-10-21 17:07:32.064001+08:00)
+2025-10-21 17:07:32,340 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:08:32 +08)" executed successfully
+2025-10-21 17:08:32,064 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:09:32 +08)" (scheduled at 2025-10-21 17:08:32.063504+08:00)
+2025-10-21 17:08:32,188 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:09:32 +08)" executed successfully
+2025-10-21 17:08:32,189 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:09:32 +08)" (scheduled at 2025-10-21 17:08:32.064001+08:00)
+2025-10-21 17:08:32,311 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:09:32 +08)" executed successfully
+2025-10-21 17:09:32,064 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:10:32 +08)" (scheduled at 2025-10-21 17:09:32.063504+08:00)
+2025-10-21 17:09:32,165 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:10:32 +08)" executed successfully
+2025-10-21 17:09:32,165 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:10:32 +08)" (scheduled at 2025-10-21 17:09:32.064001+08:00)
+2025-10-21 17:09:32,341 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:10:32 +08)" executed successfully
+2025-10-21 17:10:32,064 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:11:32 +08)" (scheduled at 2025-10-21 17:10:32.063504+08:00)
+2025-10-21 17:10:32,180 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:11:32 +08)" executed successfully
+2025-10-21 17:10:32,181 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:11:32 +08)" (scheduled at 2025-10-21 17:10:32.064001+08:00)
+2025-10-21 17:10:32,279 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:11:32 +08)" executed successfully
+2025-10-21 17:11:32,064 - apscheduler.executors.default - INFO - Running job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:12:32 +08)" (scheduled at 2025-10-21 17:11:32.063504+08:00)
+2025-10-21 17:11:32,226 - apscheduler.executors.default - INFO - Job "Task Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:12:32 +08)" executed successfully
+2025-10-21 17:11:32,226 - apscheduler.executors.default - INFO - Running job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:12:32 +08)" (scheduled at 2025-10-21 17:11:32.064001+08:00)
+2025-10-21 17:11:32,522 - apscheduler.executors.default - INFO - Job "Reminder Notifications (trigger: interval[0:01:00], next run at: 2025-10-21 17:12:32 +08)" executed successfully

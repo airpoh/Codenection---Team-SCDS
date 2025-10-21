@@ -1,0 +1,68 @@
+Database models not available, using direct SQL queries
+2025-10-21 01:26:15,785 - models - INFO - ✅ Database tables initialized successfully
+2025-10-21 01:26:15,785 - models - INFO -    Connected to: aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend/routers/blockchain.py:3123: SAWarning: relationship 'SmartAccountInfo.user' will copy column profiles.id to column smart_account_info.user_id, which conflicts with relationship(s): 'Profile.smart_account' (copies profiles.id to smart_account_info.user_id). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="smart_account"' to the 'SmartAccountInfo.user' relationship. (Background on this warning at: https://sqlalche.me/e/20/qzyx) (This warning originated from the `configure_mappers()` process, which was invoked automatically in response to a user-initiated operation.)
+  existing_count = session.query(Challenge).count()
+2025-10-21 01:26:15,878 - routers.challenges - INFO - ✅ Blockchain integration enabled for challenges
+/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend/app.py:46: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend/app.py:86: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("shutdown")
+2025-10-21 01:26:15,896 - __main__ - INFO - Blockchain router loaded successfully
+INFO:     Started server process [71668]
+INFO:     Waiting for application startup.
+2025-10-21 01:26:16,317 - models - INFO - ✅ Database tables initialized successfully
+2025-10-21 01:26:16,317 - models - INFO -    Connected to: aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+2025-10-21 01:26:16,335 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-21 01:26:16,336 - apscheduler.scheduler - INFO - Added job "Daily Point Reconciliation" to job store "default"
+2025-10-21 01:26:16,336 - apscheduler.scheduler - INFO - Scheduler started
+2025-10-21 01:26:16,336 - __main__ - INFO - ✅ Scheduled jobs started successfully
+2025-10-21 01:26:16,336 - __main__ - INFO -    - Daily reconciliation: 00:00 UTC
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Database models not available, using direct SQL queries
+2025-10-21 01:26:22,668 - models - INFO - ✅ Database tables initialized successfully
+2025-10-21 01:26:22,668 - models - INFO -    Connected to: aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend/routers/blockchain.py:3123: SAWarning: relationship 'SmartAccountInfo.user' will copy column profiles.id to column smart_account_info.user_id, which conflicts with relationship(s): 'Profile.smart_account' (copies profiles.id to smart_account_info.user_id). If this is not the intention, consider if these relationships should be linked with back_populates, or if viewonly=True should be applied to one or more if they are read-only. For the less common case that foreign key constraints are partially overlapping, the orm.foreign() annotation can be used to isolate the columns that should be written towards.   To silence this warning, add the parameter 'overlaps="smart_account"' to the 'SmartAccountInfo.user' relationship. (Background on this warning at: https://sqlalche.me/e/20/qzyx) (This warning originated from the `configure_mappers()` process, which was invoked automatically in response to a user-initiated operation.)
+  existing_count = session.query(Challenge).count()
+2025-10-21 01:26:22,840 - routers.challenges - INFO - ✅ Blockchain integration enabled for challenges
+/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend/app.py:46: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+/Users/quanpin/Desktop/UNIMATE/UNIMATE FINAL/UniMate/backend/app.py:86: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("shutdown")
+2025-10-21 01:26:22,860 - __main__ - INFO - Blockchain router loaded successfully
+INFO:     Started server process [71764]
+INFO:     Waiting for application startup.
+2025-10-21 01:26:23,470 - models - INFO - ✅ Database tables initialized successfully
+2025-10-21 01:26:23,470 - models - INFO -    Connected to: aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+2025-10-21 01:26:23,498 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-10-21 01:26:23,498 - apscheduler.scheduler - INFO - Added job "Daily Point Reconciliation" to job store "default"
+2025-10-21 01:26:23,498 - apscheduler.scheduler - INFO - Scheduler started
+2025-10-21 01:26:23,499 - __main__ - INFO - ✅ Scheduled jobs started successfully
+2025-10-21 01:26:23,499 - __main__ - INFO -    - Daily reconciliation: 00:00 UTC
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8000): [errno 48] address already in use
+INFO:     Waiting for application shutdown.
+2025-10-21 01:26:23,499 - __main__ - INFO - ✅ Scheduled jobs stopped successfully
+2025-10-21 01:26:23,499 - apscheduler.scheduler - INFO - Scheduler has been shut down
+INFO:     Application shutdown complete.

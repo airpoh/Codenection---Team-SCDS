@@ -1,0 +1,1635 @@
+// API service for UniMate frontend
+// Development configuration
+const DEVELOPMENT_CONFIG = {
+  // For physical devices/simulators, use your computer's actual IP address
+  MOBILE_IP: 'http://192.168.1.39:8000',
+  // For web development, use localhost
+  WEB_LOCALHOST: 'http://localhost:8000',
+};
+
+// Automatically detect environment and use appropriate URL
+const API_BASE_URL = DEVELOPMENT_CONFIG.MOBILE_IP; // Change to WEB_LOCALHOST for web testing
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatar_url?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface SignupRequest {
+  name: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  user_id?: string;
+  access_token?: string;
+  refresh_token?: string;
+  token_type?: string;
+  expires_in?: number;
+  user?: any;
+  message?: string;
+  error?: string;
+}
+
+class ApiService {
+  private baseUrl: string;
+
+  constructor() {
+    this.baseUrl = API_BASE_URL;
+  }
+
+  // Traditional login without OTP
+  async login(data: LoginRequest): Promise<AuthResponse> {
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: result.detail || 'Login failed',
+          error: result.detail || 'Login failed'
+        };
+      }
+
+      return {
+        success: true,
+        user_id: result.user?.id,
+        user: result.user,
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
+        token_type: result.token_type,
+        expires_in: result.expires_in,
+        message: 'Login successful'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Network error. Please try again.',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Traditional signup without OTP
+  async signup(data: SignupRequest): Promise<AuthResponse> {
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/sign-up`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: result.detail || 'Signup failed',
+          error: result.detail || 'Signup failed'
+        };
+      }
+
+      return {
+        success: true,
+        user_id: result.user_id,
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
+        token_type: result.token_type,
+        expires_in: result.expires_in,
+        message: 'Account created successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Network error. Please try again.',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get user profile
+  async getUserProfile(token: string): Promise<{success: boolean, user?: User, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/profile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get user profile'
+        };
+      }
+
+      return {
+        success: true,
+        user: result.profile || result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Update user profile
+  async updateUserProfile(token: string, data: {name?: string, avatar_url?: string}): Promise<{success: boolean, user?: User, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/profile`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to update profile'
+        };
+      }
+
+      return {
+        success: true,
+        user: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // === TASK MANAGEMENT ===
+
+  // Get all tasks
+  async getTasks(token: string, completed?: boolean): Promise<{success: boolean, tasks?: any[], error?: string}> {
+    try {
+      let url = `${this.baseUrl}/tasks`;
+      if (completed !== undefined) {
+        url += `?completed=${completed}`;
+      }
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get tasks'
+        };
+      }
+
+      return {
+        success: true,
+        tasks: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Create a new task
+  async createTask(token: string, taskData: {title: string, description?: string, due_date?: string, priority?: string}): Promise<{success: boolean, task?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to create task'
+        };
+      }
+
+      return {
+        success: true,
+        task: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Update an existing task
+  async updateTask(token: string, taskId: string, taskData: {title?: string, notes?: string, starts_at?: string, ends_at?: string, priority?: string, is_completed?: boolean}): Promise<{success: boolean, task?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to update task'
+        };
+      }
+
+      return {
+        success: true,
+        task: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Delete a task
+  async deleteTask(token: string, taskId: string): Promise<{success: boolean, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        return {
+          success: false,
+          error: result.detail || 'Failed to delete task'
+        };
+      }
+
+      return {
+        success: true
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get a specific task
+  async getTask(token: string, taskId: string): Promise<{success: boolean, task?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks/${taskId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get task'
+        };
+      }
+
+      return {
+        success: true,
+        task: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Update a reminder
+  async updateReminder(token: string, reminderId: string, reminderData: {title?: string, description?: string, reminder_time?: string, repeat_type?: string}): Promise<{success: boolean, reminder?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks/reminders/${reminderId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reminderData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to update reminder'
+        };
+      }
+
+      return {
+        success: true,
+        reminder: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Delete a reminder
+  async deleteReminder(token: string, reminderId: string): Promise<{success: boolean, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks/reminders/${reminderId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        return {
+          success: false,
+          error: result.detail || 'Failed to delete reminder'
+        };
+      }
+
+      return {
+        success: true
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // === CALENDAR ===
+
+  // Get calendar events
+  async getCalendarEvents(token: string, startDate?: string, endDate?: string): Promise<{success: boolean, events?: any[], error?: string}> {
+    try {
+      let url = `${this.baseUrl}/calendar/events`;
+      const params = new URLSearchParams();
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+      if (params.toString()) url += `?${params.toString()}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get calendar events'
+        };
+      }
+
+      return {
+        success: true,
+        events: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // === LIGHTHOUSE (Emergency & Wellness) ===
+
+  // Create emergency alert
+  async createEmergencyAlert(token: string, alertData: {emergency_type: string, priority: string, message: string, location?: any}): Promise<{success: boolean, alert?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/emergency-alert`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(alertData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to create emergency alert'
+        };
+      }
+
+      return {
+        success: true,
+        alert: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get trusted contacts
+  async getTrustedContacts(token: string): Promise<{success: boolean, contacts?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/trusted-contacts`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get trusted contacts'
+        };
+      }
+
+      return {
+        success: true,
+        contacts: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Add a trusted contact
+  async addTrustedContact(
+    token: string,
+    contactData: {name: string, phone: string, relationship: string, is_primary?: boolean}
+  ): Promise<{success: boolean, contact?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/contacts`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to add contact'
+        };
+      }
+
+      return {
+        success: true,
+        contact: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Update a trusted contact
+  async updateTrustedContact(
+    token: string,
+    contactId: string,
+    contactData: {name?: string, phone?: string, relationship?: string, is_primary?: boolean}
+  ): Promise<{success: boolean, contact?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/contacts/${contactId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to update contact'
+        };
+      }
+
+      return {
+        success: true,
+        contact: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Delete a trusted contact
+  async deleteTrustedContact(token: string, contactId: string): Promise<{success: boolean, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/contacts/${contactId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        return {
+          success: false,
+          error: result.detail || 'Failed to delete contact'
+        };
+      }
+
+      return {
+        success: true
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Create wellness check-in
+  async createWellnessCheckIn(
+    token: string,
+    checkInData: {mood: string, stress_level: number, notes?: string, location?: any}
+  ): Promise<{success: boolean, checkIn?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/wellness-check`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkInData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to create wellness check-in'
+        };
+      }
+
+      return {
+        success: true,
+        checkIn: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get wellness check-in history
+  async getWellnessHistory(
+    token: string,
+    days: number = 30
+  ): Promise<{success: boolean, history?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/wellness-history?days=${days}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get wellness history'
+        };
+      }
+
+      return {
+        success: true,
+        history: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get mental health resources
+  async getMentalHealthResources(token: string): Promise<{success: boolean, resources?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/lighthouse/resources`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get resources'
+        };
+      }
+
+      return {
+        success: true,
+        resources: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // === CHALLENGES ===
+
+  // Get available challenges
+  async getChallenges(token: string): Promise<{success: boolean, challenges?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/challenges`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get challenges'
+        };
+      }
+
+      return {
+        success: true,
+        challenges: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Start a challenge
+  async startChallenge(token: string, challengeId: string): Promise<{success: boolean, challenge?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/challenges/start`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ challenge_id: challengeId }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to start challenge'
+        };
+      }
+
+      return {
+        success: true,
+        challenge: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Complete a challenge
+  async completeChallenge(
+    token: string,
+    challengeId: string,
+    proofData?: any
+  ): Promise<{success: boolean, challenge?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/challenges/complete`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          challenge_id: challengeId,
+          proof: proofData
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to complete challenge'
+        };
+      }
+
+      return {
+        success: true,
+        challenge: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get challenge progress
+  async getChallengeProgress(token: string): Promise<{success: boolean, progress?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/challenges/progress`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get challenge progress'
+        };
+      }
+
+      return {
+        success: true,
+        progress: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // === REWARDS ===
+
+  // Get user token balance from blockchain
+  async getUserTokenBalance(token: string): Promise<{success: boolean, balance?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/chain/balance`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get user token balance'
+        };
+      }
+
+      return {
+        success: true,
+        balance: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get reward marketplace items
+  async getRewardMarket(token: string): Promise<{success: boolean, items?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/rewards`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get reward market'
+        };
+      }
+
+      return {
+        success: true,
+        items: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // === MOOD & WELLNESS ===
+
+  // Get mood history
+  async getMoodHistory(token: string, days: number = 30): Promise<{success: boolean, mood_history?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/users/mood-history?days=${days}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get mood history'
+        };
+      }
+
+      return {
+        success: true,
+        mood_history: result.mood_history
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get user statistics
+  async getUserStats(token: string): Promise<{success: boolean, stats?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/users/stats`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get user stats'
+        };
+      }
+
+      return {
+        success: true,
+        stats: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get user reminders
+  async getReminders(token: string): Promise<{success: boolean, reminders?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks/reminders`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get reminders'
+        };
+      }
+
+      return {
+        success: true,
+        reminders: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Create a new reminder
+  async createReminder(token: string, reminderData: {title: string, description?: string, reminder_time: string, repeat_type?: string}): Promise<{success: boolean, reminder?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tasks/reminders`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reminderData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to create reminder'
+        };
+      }
+
+      return {
+        success: true,
+        reminder: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get user points/coins
+  async getUserPoints(token: string): Promise<{success: boolean, points?: number, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/rewards/points`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get user points'
+        };
+      }
+
+      return {
+        success: true,
+        points: result.total_points || 0
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Redeem a voucher
+  async redeemVoucher(token: string, voucherId: string): Promise<{success: boolean, voucher?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/rewards/vouchers/${voucherId}/redeem`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to redeem voucher'
+        };
+      }
+
+      return {
+        success: true,
+        voucher: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get daily challenges from blockchain
+  async getDailyChallenges(token: string): Promise<{success: boolean, challenges?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/chain/challenges/daily`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get daily challenges'
+        };
+      }
+
+      return {
+        success: true,
+        challenges: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Upload user avatar
+  async uploadAvatar(token: string, formData: FormData): Promise<{success: boolean, avatar_url?: string, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/users/profile/avatar`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // 'Content-Type': 'multipart/form-data' is automatically set by the browser with the correct boundary
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to upload avatar'
+        };
+      }
+
+      return {
+        success: true,
+        avatar_url: result.avatar_url
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // === BLOCKCHAIN INTEGRATION ===
+  // Direct integration with blockchain.py endpoints (no extraction needed)
+
+  // Get blockchain health status
+  async getBlockchainHealth(): Promise<{success: boolean, health?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/chain/health`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Blockchain service unhealthy'
+        };
+      }
+
+      return {
+        success: true,
+        health: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Blockchain connection failed'
+      };
+    }
+  }
+
+  // Get WELL token balance for an address
+  async getWalletBalance(address: string): Promise<{success: boolean, balance?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/chain/balance/${address}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get wallet balance'
+        };
+      }
+
+      return {
+        success: true,
+        balance: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // CRITICAL: Exchange points for WELL tokens (NEW endpoint from consolidation plan)
+  async exchangePointsForTokens(token: string, amount: number): Promise<{success: boolean, exchange?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/rewards/points/exchange`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to exchange points for tokens'
+        };
+      }
+
+      return {
+        success: true,
+        exchange: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Earn points for completing activities
+  async earnPoints(token: string, source: string, amount: number, description: string): Promise<{success: boolean, points?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/rewards/points/earn`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ source, amount, description }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to earn points'
+        };
+      }
+
+      return {
+        success: true,
+        points: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Get available vouchers
+  async getAvailableVouchers(token: string): Promise<{success: boolean, vouchers?: any[], error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/rewards/vouchers/available`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get available vouchers'
+        };
+      }
+
+      return {
+        success: true,
+        vouchers: result.vouchers || result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Smart Account operations - UPDATED: Using secure biconomy endpoint
+  async createSmartAccount(token: string): Promise<{success: boolean, account?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/biconomy/smart-account/create`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}), // SECURE: No private keys or signatures needed from frontend
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to create smart account'
+        };
+      }
+
+      return {
+        success: true,
+        account: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Execute wellness redemption via Smart Account - UPDATED: Using secure biconomy endpoint
+  async redeemWithSmartAccount(token: string, amount: number, rewardId: string, smartAccountAddress: string): Promise<{success: boolean, redemption?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/biconomy/smart-account/wellness-redeem`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          smart_account_address: smartAccountAddress,
+          amount,
+          reward_id: rewardId
+          // SECURE: No timestamps or signatures needed - backend handles all security
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to redeem with smart account'
+        };
+      }
+
+      return {
+        success: true,
+        redemption: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // ============================================================================
+  // PHASE 4: POINT-BASED GASLESS REDEMPTION (Biconomy + EIP-712 Signatures)
+  // ============================================================================
+
+  /**
+   * Redeem voucher using challenge points (GASLESS via Biconomy)
+   *
+   * Flow:
+   * 1. Frontend calls this method with points + voucher ID
+   * 2. Backend creates EIP-712 signature for validation
+   * 3. Backend creates UserOperation via Biconomy SDK
+   * 4. Biconomy Paymaster sponsors gas (student pays $0)
+   * 5. Smart contract validates signature and mints/burns WELL tokens
+   *
+   * @param token Auth token
+   * @param points Amount of points to spend
+   * @param voucherId Voucher to redeem
+   * @param smartAccountAddress User's smart account address
+   */
+  async redeemVoucherWithPoints(
+    token: string,
+    points: number,
+    voucherId: string,
+    smartAccountAddress: string
+  ): Promise<{success: boolean, transaction?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/biconomy/smart-account/redeem-with-points`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          points,
+          voucher_id: voucherId,
+          smart_account_address: smartAccountAddress
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to redeem voucher with points'
+        };
+      }
+
+      return {
+        success: true,
+        transaction: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
+   * Batch claim multiple challenge rewards in one gasless transaction
+   *
+   * Allows students to claim multiple completed tasks/challenges at once
+   * without paying gas fees
+   *
+   * @param token Auth token
+   * @param claims Array of {points, taskId}
+   * @param smartAccountAddress User's smart account address
+   */
+  async batchClaimRewards(
+    token: string,
+    claims: Array<{points: number, taskId: string}>,
+    smartAccountAddress: string
+  ): Promise<{success: boolean, transaction?: any, error?: string}> {
+    try {
+      const response = await fetch(`${this.baseUrl}/biconomy/smart-account/batch-claim`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          claims,
+          smart_account_address: smartAccountAddress
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to batch claim rewards'
+        };
+      }
+
+      return {
+        success: true,
+        transaction: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
+   * Get WELL token balance for user's smart account
+   *
+   * @param token Auth token
+   * @param smartAccountAddress User's smart account address
+   */
+  async getWellBalance(
+    token: string,
+    smartAccountAddress: string
+  ): Promise<{success: boolean, balance?: string, error?: string}> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/biconomy/smart-account/well-balance?address=${smartAccountAddress}`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to get WELL balance'
+        };
+      }
+
+      return {
+        success: true,
+        balance: result.balance
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
+   * Convert points to WELL tokens (preview calculation)
+   *
+   * @param token Auth token
+   * @param points Amount of points
+   */
+  async pointsToWell(
+    token: string,
+    points: number
+  ): Promise<{success: boolean, wellAmount?: string, error?: string}> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/biconomy/smart-account/points-to-well?points=${points}`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.detail || 'Failed to convert points'
+        };
+      }
+
+      return {
+        success: true,
+        wellAmount: result.well_amount
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+}
+
+export const apiService = new ApiService();
