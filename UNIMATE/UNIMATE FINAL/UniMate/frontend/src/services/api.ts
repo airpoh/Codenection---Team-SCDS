@@ -59,12 +59,9 @@ import type {
 } from '../types/api';
 
 // Development configuration
-const DEVELOPMENT_CONFIG = {
-  MOBILE_IP: 'http://10.72.127.211:8000',  // Updated - Current Network (2025-10-20)
-  WEB_LOCALHOST: 'http://localhost:8000',
-};
+export const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || "https://unimate-team-scds.onrender.com";
 
-const API_BASE_URL = DEVELOPMENT_CONFIG.MOBILE_IP;
 
 class ApiService {
   private baseUrl: string;
