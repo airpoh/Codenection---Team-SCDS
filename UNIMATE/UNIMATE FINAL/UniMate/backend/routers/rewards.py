@@ -298,9 +298,13 @@ async def get_user_points(user: Dict[str, Any] = Depends(get_authenticated_user)
                         UserChallenge.status == "completed"
                     ).all()
 
+                    # DEBUG: Log query details
+                    logger.info(f"🔍 Challenge query: user_id={user_id}, date={today_str}, status=completed")
+
                     # Get points from the related Challenge model
                     earned_today_challenges = 0
                     for uc in challenges_today:
+                        logger.info(f"🔍 Found challenge: id={uc.challenge_id}, status={uc.status}, date={uc.date}")
                         if uc.challenge:
                             earned_today_challenges += uc.challenge.points_reward or 0
 
@@ -375,17 +379,17 @@ async def get_user_points(user: Dict[str, Any] = Depends(get_authenticated_user)
                 # For now, we just show the correct calculated value in the API response
                 # The database may be out of sync, but it will correct itself at daily reset
 
-                # For display: show the database total as-is
-                # The earned_today we calculated includes daily habits that may not be in DB yet
-                logger.info(f"📊 DISPLAY VALUES: total={user_points.total_points}, earned_today={earned_today_total}")
+                # For display: Use DATABASE values for both total and earned_today
+                # The database is the source of truth, updated by earn_points()
+                logger.info(f"📊 DISPLAY VALUES: total={user_points.total_points}, earned_today={user_points.earned_today}")
 
                 # 计算本周积分 (简化实现)
-                earned_this_week = earned_today_total * 7  # 简化计算
+                earned_this_week = user_points.earned_today * 7  # 简化计算
 
                 return UserPoints(
                     total_points=user_points.total_points,
                     available_points=user_points.total_points,
-                    earned_today=earned_today_total,  # Show calculated value (includes daily habits)
+                    earned_today=user_points.earned_today,  # ✅ Use database value (source of truth)
                     earned_this_week=earned_this_week
                 )
             else:
