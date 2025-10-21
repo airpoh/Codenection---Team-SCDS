@@ -2,6 +2,9 @@
   "expo": {
     "name": "unimate",
     "slug": "unimate",
+    "owner": "justinpoh2808",
+    "runtimeVersion": { "policy": "sdkVersion" },
+    "updates": { "url": "https://u.expo.dev" },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
