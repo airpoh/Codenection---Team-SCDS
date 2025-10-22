@@ -108,12 +108,21 @@ def calculate_completeness(profile: ProfileModel) -> float:
 # --- Profile Endpoints ---
 
 @router.get("/profile", response_model=UserProfile)
-def get_user_profile(user: Dict[str, Any] = Depends(get_authenticated_user)):
+async def get_user_profile(
+    background_tasks: BackgroundTasks,
+    user: Dict[str, Any] = Depends(get_authenticated_user)
+):
     """Get the current user's profile."""
     session = db()
     try:
         user_id = user["sub"]
         user_email = user.get("email", "user@example.com")
+
+        # ✅ Award login points (once per day) via background task
+        # The award_daily_action_points function has built-in duplicate prevention
+        from routers.rewards import award_daily_action_points
+        background_tasks.add_task(award_daily_action_points, user_id, "login")
+        logger.info(f"✅ Login points job scheduled for user {user_id}")
 
         profile = session.query(ProfileModel).filter(ProfileModel.id == user_id).first()
 
