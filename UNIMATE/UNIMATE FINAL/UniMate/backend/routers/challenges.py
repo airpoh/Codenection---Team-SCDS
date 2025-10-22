@@ -520,14 +520,14 @@ async def complete_challenge(
 
                 # Award "Complete 1 daily challenge" bonus (5 points) - only on first challenge
                 if challenges_completed_today == 1:
-                    awarded = await award_daily_action_points(user_id, "complete_1_challenge", http_request)
+                    awarded = award_daily_action_points(user_id, "complete_1_challenge")
                     if awarded:
                         island_action_bonus += 5
                         logger.info(f"🏝️ Island action awarded: Complete 1 challenge +5 points")
 
                 # Award "Complete 3 daily challenges" bonus (10 points) - only when reaching 3
                 if challenges_completed_today == 3:
-                    awarded = await award_daily_action_points(user_id, "complete_3_challenges", http_request)
+                    awarded = award_daily_action_points(user_id, "complete_3_challenges")
                     if awarded:
                         island_action_bonus += 10
                         logger.info(f"🏝️ Island action awarded: Complete 3 challenges +10 points")
