@@ -443,6 +443,81 @@ class RedisService:
         return blocked
 
     # ============================================================
+    # Distributed Lock Operations
+    # ============================================================
+
+    def acquire_lock(self, lock_key: str, ttl: int = 10) -> bool:
+        """
+        Acquire a distributed lock using Redis SET NX EX.
+
+        Args:
+            lock_key: Unique key for the lock (e.g., "lock:complete_challenge:user123:c1")
+            ttl: Lock expiry in seconds (default: 10 seconds)
+
+        Returns:
+            True if lock was acquired, False if lock is already held
+        """
+        full_key = f"lock:{lock_key}"
+        lock_value = datetime.now().isoformat()
+
+        if self._client:
+            try:
+                # Atomic SET NX EX operation
+                result = self._client.set(full_key, lock_value, nx=True, ex=ttl)
+                acquired = result is not None and result
+                if acquired:
+                    logger.debug(f"🔒 Lock acquired: {lock_key}")
+                else:
+                    logger.warning(f"⏳ Lock already held: {lock_key}")
+                return acquired
+            except Exception as e:
+                logger.error(f"Redis acquire_lock failed: {e}")
+                return self._fallback_acquire_lock(full_key, lock_value, ttl)
+        else:
+            return self._fallback_acquire_lock(full_key, lock_value, ttl)
+
+    def _fallback_acquire_lock(self, key: str, value: str, ttl: int) -> bool:
+        """Fallback lock acquisition using in-memory cache."""
+        cached = self._fallback_cache.get(key)
+        if cached and cached["expires_at"] > datetime.now():
+            return False  # Lock already held
+
+        self._fallback_cache[key] = {
+            "value": value,
+            "expires_at": datetime.now() + timedelta(seconds=ttl)
+        }
+        return True  # Lock acquired
+
+    def release_lock(self, lock_key: str) -> bool:
+        """
+        Release a distributed lock.
+
+        Args:
+            lock_key: The lock key to release
+
+        Returns:
+            True if lock was released successfully
+        """
+        full_key = f"lock:{lock_key}"
+
+        if self._client:
+            try:
+                deleted = self._client.delete(full_key)
+                if deleted:
+                    logger.debug(f"🔓 Lock released: {lock_key}")
+                return deleted > 0
+            except Exception as e:
+                logger.error(f"Redis release_lock failed: {e}")
+                if full_key in self._fallback_cache:
+                    del self._fallback_cache[full_key]
+                return False
+        else:
+            if full_key in self._fallback_cache:
+                del self._fallback_cache[full_key]
+                return True
+            return False
+
+    # ============================================================
     # General Cache Operations
     # ============================================================
 
