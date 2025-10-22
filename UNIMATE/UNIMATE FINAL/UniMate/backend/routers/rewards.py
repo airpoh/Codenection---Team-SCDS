@@ -265,6 +265,29 @@ async def get_user_points(user: Dict[str, Any] = Depends(get_authenticated_user)
                 BlockchainUserPoints.profile_id == user_id
             ).first()
 
+            # ✅ PRIORITY 2: Perform daily reset check FIRST (reliable, timezone-aware)
+            today_str_malaysia = datetime.now(MALAYSIA_TZ).strftime("%Y-%m-%d")
+
+            if user_points:
+                # Check if we need to reset for new day (Malaysia timezone)
+                if user_points.last_daily_reset != today_str_malaysia:
+                    user_points.earned_today = 0
+                    user_points.last_daily_reset = today_str_malaysia
+                    session.commit()
+                    logger.info(f"🔄 Daily reset performed for user {user_id} (MYT: {today_str_malaysia})")
+            else:
+                # Create new points record if user doesn't have one
+                user_points = BlockchainUserPoints(
+                    profile_id=user_id,
+                    total_points=0,
+                    earned_today=0,
+                    last_updated=int(time.time()),
+                    last_daily_reset=today_str_malaysia
+                )
+                session.add(user_points)
+                session.commit()
+                logger.info(f"📝 Created new points record for user {user_id}")
+
             if user_points:
                 # ✅ Calculate Daily Habits points for blockchain integration path
                 daily_habits_points = 0
@@ -1223,62 +1246,100 @@ class DailyEarnAction(BaseModel):
     completed: bool
 
 # Helper function to award points for daily actions
-async def award_daily_action_points(user_id: str, action_id: str, request: Request = None):
+# NOTE: This runs as a background task, so it must manage its own database session
+def award_daily_action_points(user_id: str, action_id: str):
     """
     Award points for completing a daily action (login, add_task, add_reminder, set_mood)
+    This function runs as a FastAPI background task and manages its own DB session.
     Returns True if points were awarded, False if already completed today
     """
-    # Define points for each action
-    ACTION_POINTS = {
-        "login": 5,
-        "add_task": 5,
-        "add_reminder": 10,
-        "set_mood_today": 5,
-        "complete_1_challenge": 5,      # Island action: Complete 1 daily challenge
-        "complete_3_challenges": 10     # Island action: Complete 3 daily challenges
-    }
+    # Create a new database session for this background task
+    session = blockchain_db()
 
-    if action_id not in ACTION_POINTS:
-        logger.warning(f"Unknown action_id: {action_id}")
-        return False
-
-    points_amount = ACTION_POINTS[action_id]
-    today = datetime.now().strftime("%Y-%m-%d")
-
-    # Check if already completed today by checking activity logs
-    if ACTIVITY_LOGGING_ENABLED:
-        from scripts.add_activity_logging import get_user_activity_logs
-
-        # Check if this action was already logged today
-        logs = get_user_activity_logs(user_id, limit=100, activity_type="points_earned")
-        for log in logs:
-            if log.get("details", {}).get("source") == f"daily_action_{action_id}":
-                # Check if it's from today
-                log_date = log.get("created_at", "")[:10]  # Extract YYYY-MM-DD
-                if log_date == today:
-                    logger.info(f"Action {action_id} already completed today for user {user_id}")
-                    return False
-
-    # Award points
     try:
-        # Create a mock user dict for earn_points
-        user_dict = {"sub": user_id}
+        # Define points for each action
+        ACTION_POINTS = {
+            "login": 5,
+            "add_task": 5,
+            "add_reminder": 10,
+            "set_mood_today": 5,
+            "complete_1_challenge": 5,      # Island action: Complete 1 daily challenge
+            "complete_3_challenges": 10     # Island action: Complete 3 daily challenges
+        }
 
-        # Call earn_points internally
-        await earn_points(
-            source=f"daily_action_{action_id}",
-            amount=points_amount,
-            description=f"Completed daily action: {action_id}",
-            user=user_dict,
-            request=request
-        )
+        if action_id not in ACTION_POINTS:
+            logger.warning(f"Unknown action_id: {action_id}")
+            return False
+
+        points_amount = ACTION_POINTS[action_id]
+        today_str_malaysia = datetime.now(MALAYSIA_TZ).strftime("%Y-%m-%d")
+
+        # Check if already completed today by checking activity logs
+        if ACTIVITY_LOGGING_ENABLED:
+            from scripts.add_activity_logging import get_user_activity_logs
+
+            # Check if this action was already logged today
+            logs = get_user_activity_logs(user_id, limit=100, activity_type="points_earned")
+            for log in logs:
+                if log.get("details", {}).get("source") == f"daily_action_{action_id}":
+                    # Check if it's from today
+                    log_date = log.get("created_at", "")[:10]  # Extract YYYY-MM-DD
+                    if log_date == today_str_malaysia:
+                        logger.info(f"Action {action_id} already completed today for user {user_id}")
+                        return False
+
+        # Award points using this session
+        user_points = session.query(BlockchainUserPoints).filter(
+            BlockchainUserPoints.profile_id == user_id
+        ).first()
+
+        if user_points:
+            # Check daily reset
+            if user_points.last_daily_reset != today_str_malaysia:
+                user_points.earned_today = 0
+                user_points.last_daily_reset = today_str_malaysia
+
+            # ADD POINTS
+            user_points.total_points += points_amount
+            user_points.earned_today += points_amount
+            user_points.last_updated = int(time.time())
+        else:
+            # Create new record
+            user_points = BlockchainUserPoints(
+                profile_id=user_id,
+                total_points=points_amount,
+                earned_today=points_amount,
+                last_updated=int(time.time()),
+                last_daily_reset=today_str_malaysia
+            )
+            session.add(user_points)
+
+        session.commit()
+
+        # Log the points earning activity
+        if ACTIVITY_LOGGING_ENABLED:
+            try:
+                log_points_earned(
+                    profile_id=user_id,
+                    points_earned=points_amount,
+                    source=f"daily_action_{action_id}",
+                    description=f"Completed daily action: {action_id}",
+                    transaction_hash=None,
+                    smart_account_address=None
+                )
+            except Exception as log_error:
+                logger.warning(f"Failed to log points earning activity: {log_error}")
 
         logger.info(f"✅ Awarded {points_amount} points for {action_id} to user {user_id}")
         return True
 
     except Exception as e:
-        logger.error(f"Failed to award points for {action_id}: {e}")
+        session.rollback()
+        logger.error(f"❌ Failed to award points for {action_id} to user {user_id}: {e}", exc_info=True)
         return False
+
+    finally:
+        session.close()
 
 @router.post("/daily-action/{action_id}/complete")
 async def complete_daily_action(
