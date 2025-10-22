@@ -171,6 +171,7 @@ app.include_router(notifications_router, tags=["Push-Notifications", "Mobile", "
 
 # Root health endpoint
 @app.get("/")
+@app.head("/")  # ✅ Explicitly support HEAD for health checks
 async def root():
     return {
         "message": "UniMate Backend API",
