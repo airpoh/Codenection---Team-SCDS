@@ -34,8 +34,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const loadStoredAuth = async () => {
+    let storedToken: string | null = null;
+    let storedUser: string | null = null;
+
     try {
-      const [storedToken, storedUser] = await Promise.all([
+      [storedToken, storedUser] = await Promise.all([
         AsyncStorage.getItem(AUTH_TOKEN_KEY),
         AsyncStorage.getItem(AUTH_USER_KEY),
       ]);
@@ -69,6 +72,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('[AuthContext] Login response:', { success: response.success, hasToken: !!response.access_token, hasUser: !!response.user });
 
       if (response.success && response.access_token) {
+        // ✅ Clear previous user's cached data before storing new user
+        // This prevents new user from seeing old user's rewards/points
+        const cacheKeysToRemove = [
+          'rm_coins_total',
+          'rm_today_earned',
+          'rm_today_redeems',
+          'rm_vouchers',
+          'rm_task_dates',
+          'profile.data',
+          'completedChallenges_today',
+          'login_streak',
+          'login_last_date',
+        ];
+        await AsyncStorage.multiRemove(cacheKeysToRemove);
+        console.log('[AuthContext] Cleared previous user cache');
+
         // Store token and user
         await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.access_token);
         console.log('[AuthContext] Token saved to AsyncStorage');
@@ -103,6 +122,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await apiService.signup(data);
 
       if (response.success && response.access_token) {
+        // ✅ Clear any cached data before storing new user (just in case)
+        const cacheKeysToRemove = [
+          'rm_coins_total',
+          'rm_today_earned',
+          'rm_today_redeems',
+          'rm_vouchers',
+          'rm_task_dates',
+          'profile.data',
+          'completedChallenges_today',
+          'login_streak',
+          'login_last_date',
+        ];
+        await AsyncStorage.multiRemove(cacheKeysToRemove);
+
         // Store token and user
         await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.access_token);
         if (response.user) {
@@ -127,8 +160,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = useCallback(async () => {
     try {
-      // Clear stored data
-      await AsyncStorage.multiRemove([AUTH_TOKEN_KEY, AUTH_USER_KEY]);
+      // ✅ Clear ALL stored data including rewards/points cache
+      // This prevents previous user's data from showing to new users
+      const keysToRemove = [
+        AUTH_TOKEN_KEY,
+        AUTH_USER_KEY,
+        // Rewards/points cache keys
+        'rm_coins_total',
+        'rm_today_earned',
+        'rm_today_redeems',
+        'rm_vouchers',
+        'rm_task_dates',
+        // Profile cache keys
+        'profile.data',
+        'completedChallenges_today',
+        'login_streak',
+        'login_last_date',
+      ];
+
+      await AsyncStorage.multiRemove(keysToRemove);
+      console.log('[AuthContext] Cleared all user data from AsyncStorage');
 
       // Clear state
       setUser(null);
