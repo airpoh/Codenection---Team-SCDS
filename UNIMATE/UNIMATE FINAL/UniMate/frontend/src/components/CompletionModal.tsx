@@ -30,7 +30,7 @@ export default function CompletionModal({ visible, title = "Challenge Complete",
           </View>
 
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>Congratulations — you have finished the challenge.</Text>
+          <Text style={styles.subtitle}>Congratulations — you have finished the challenge. Click claim button to collect coins, it will automatically return to homepage, do not spam it.</Text>
 
           <View style={styles.actions}>
             <TouchableOpacity style={[styles.btn, styles.claim]} onPress={onClaim}>
@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   tick: { fontSize: 36 },
-  title: { fontFamily: fonts.heading, fontSize: 20, color: "#111", marginBottom: 6, textAlign: "center" },
-  subtitle: { fontFamily: fonts.body, fontSize: 14, color: "rgba(0,0,0,0.6)", textAlign: "center", marginBottom: 18 },
+  title: { fontFamily: fonts.heading, fontSize: 20, fontWeight: 600, color: "#111", marginBottom: 6, textAlign: "center" },
+  subtitle: { fontFamily: fonts.body, fontSize: 14, fontWeight: 500, color: "rgba(0,0,0,0.6)", textAlign: "center", marginBottom: 18 },
 
   actions: { flexDirection: "row", width: "100%", justifyContent: "space-between" },
-  btn: { flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  btn: { flex: 1, paddingVertical: 12, borderRadius: 30, alignItems: "center", justifyContent: "center" },
   claim: { backgroundColor: colors.secondary, marginRight: 8 },
   close: { backgroundColor: "#F3F3F4", marginLeft: 8 },
 
