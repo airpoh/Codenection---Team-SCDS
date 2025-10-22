@@ -259,170 +259,41 @@ async def get_user_points(user: Dict[str, Any] = Depends(get_authenticated_user)
         # 从blockchain.py的数据库获取积分信息
         session = blockchain_db()
         try:
+            # ✅ FIX: Make this endpoint STRICTLY READ-ONLY
+            # No database writes, no point calculations
+            # Points are awarded by background tasks only
+
             # user_id from JWT is already the profile UUID
-            # 获取用户积分记录
             user_points = session.query(BlockchainUserPoints).filter(
                 BlockchainUserPoints.profile_id == user_id
             ).first()
 
-            # ✅ PRIORITY 2: Perform daily reset check FIRST (reliable, timezone-aware)
-            today_str_malaysia = datetime.now(MALAYSIA_TZ).strftime("%Y-%m-%d")
-
-            if user_points:
-                # Check if we need to reset for new day (Malaysia timezone)
-                if user_points.last_daily_reset != today_str_malaysia:
-                    user_points.earned_today = 0
-                    user_points.last_daily_reset = today_str_malaysia
-                    session.commit()
-                    logger.info(f"🔄 Daily reset performed for user {user_id} (MYT: {today_str_malaysia})")
-            else:
-                # Create new points record if user doesn't have one
-                user_points = BlockchainUserPoints(
-                    profile_id=user_id,
-                    total_points=0,
-                    earned_today=0,
-                    last_updated=int(time.time()),
-                    last_daily_reset=today_str_malaysia
-                )
-                session.add(user_points)
-                session.commit()
-                logger.info(f"📝 Created new points record for user {user_id}")
-
-            if user_points:
-                # ✅ Calculate Daily Habits points for blockchain integration path
-                daily_habits_points = 0
-
-                # ⚠️ Do NOT use user_points.earned_today - it may include old daily habits additions
-                # We'll calculate challenges separately from user_challenges table
-                earned_today_challenges = 0
-
-                try:
-                    from models import Task as TaskModel, Reminder as ReminderModel, UserChallenge
-
-                    # Use Malaysia timezone for accurate "today" calculation
-                    today_malaysia = datetime.now(MALAYSIA_TZ).date()
-                    today_str = today_malaysia.strftime("%Y-%m-%d")
-                    start_of_today = datetime.combine(today_malaysia, dt_time.min, tzinfo=MALAYSIA_TZ)
-                    start_of_tomorrow = start_of_today + timedelta(days=1)
-
-                    # Convert Malaysia timezone to UTC for database comparison
-                    start_of_today_utc = start_of_today.astimezone(ZoneInfo("UTC"))
-                    start_of_tomorrow_utc = start_of_tomorrow.astimezone(ZoneInfo("UTC"))
-
-                    logger.info(f"🕐 Checking Daily Habits for Malaysia date: {today_malaysia}")
-                    logger.info(f"🕐 UTC range: {start_of_today_utc} to {start_of_tomorrow_utc}")
-
-                    # ✅ Get actual challenges completed today from user_challenges table
-                    from models import Challenge as ChallengeModel
-
-                    challenges_today = session.query(UserChallenge).filter(
-                        UserChallenge.profile_id == user_id,
-                        UserChallenge.date == today_str,
-                        UserChallenge.status == "completed"
-                    ).all()
-
-                    # DEBUG: Log query details
-                    logger.info(f"🔍 Challenge query: user_id={user_id}, date={today_str}, status=completed")
-
-                    # Get points from the related Challenge model
-                    earned_today_challenges = 0
-                    for uc in challenges_today:
-                        logger.info(f"🔍 Found challenge: id={uc.challenge_id}, status={uc.status}, date={uc.date}")
-                        if uc.challenge:
-                            earned_today_challenges += uc.challenge.points_reward or 0
-
-                    logger.info(f"🏆 Challenges completed today: {len(challenges_today)} challenges, {earned_today_challenges} points")
-
-                    # Login: 5 points (if they're calling this API, they logged in today)
-                    daily_habits_points += 5
-                    logger.info(f"✅ Daily habits: Login +5 points")
-
-                    # Add a task: 5 points
-                    task_count = session.query(TaskModel).filter(
-                        TaskModel.user_id == user_id,
-                        TaskModel.created_at >= start_of_today_utc,
-                        TaskModel.created_at < start_of_tomorrow_utc
-                    ).count()
-                    logger.info(f"📋 Found {task_count} tasks created today")
-                    if task_count > 0:
-                        daily_habits_points += 5
-                        logger.info(f"✅ Daily habits: Added {task_count} tasks +5 points")
-
-                    # Add a reminder: 10 points
-                    reminder_count = session.query(ReminderModel).filter(
-                        ReminderModel.user_id == user_id,
-                        ReminderModel.created_at >= start_of_today_utc,
-                        ReminderModel.created_at < start_of_tomorrow_utc
-                    ).count()
-                    logger.info(f"🔔 Found {reminder_count} reminders created today")
-                    if reminder_count > 0:
-                        daily_habits_points += 10
-                        logger.info(f"✅ Daily habits: Added {reminder_count} reminders +10 points")
-
-                    # Set mood today: 5 points
-                    profile = session.query(Profile).filter(Profile.id == user_id).first()
-                    mood_set_today = False
-                    if profile and profile.updated_at:
-                        # Check if profile was updated today (mood update triggers this)
-                        try:
-                            if isinstance(profile.updated_at, int):
-                                # Unix timestamp
-                                updated_datetime = datetime.fromtimestamp(profile.updated_at, tz=ZoneInfo("UTC"))
-                            else:
-                                # datetime object
-                                updated_datetime = profile.updated_at
-                                if updated_datetime.tzinfo is None:
-                                    updated_datetime = updated_datetime.replace(tzinfo=ZoneInfo("UTC"))
-
-                            # Check if it's today in Malaysia timezone
-                            if updated_datetime >= start_of_today_utc and updated_datetime < start_of_tomorrow_utc:
-                                mood_set_today = True
-                        except Exception as e:
-                            logger.error(f"Failed to check mood update time: {e}")
-
-                    logger.info(f"😊 Mood set today: {mood_set_today}")
-                    if mood_set_today:
-                        daily_habits_points += 5
-                        logger.info(f"✅ Daily habits: Set mood today +5 points")
-
-                    logger.info(f"💰 Total daily habits points: {daily_habits_points}")
-                except Exception as e:
-                    logger.error(f"❌ Failed to calculate daily habits points: {e}", exc_info=True)
-
-                # Calculate total earned today = challenges + daily habits
-                earned_today_total = earned_today_challenges + daily_habits_points
-                logger.info(f"🎯 FINAL CALCULATION: Challenges={earned_today_challenges} + Daily Habits={daily_habits_points} = Total={earned_today_total}")
-
-                # Log database values
-                logger.info(f"💎 Database total_points: {user_points.total_points}")
-                logger.info(f"💎 Database earned_today (from DB): {user_points.earned_today}")
-
-                # ⚠️ NOTE: We calculate daily habits but DO NOT persist them to DB
-                # Daily habits should be awarded when actions happen, not at display time
-                # For now, we just show the correct calculated value in the API response
-                # The database may be out of sync, but it will correct itself at daily reset
-
-                # For display: Use DATABASE values for both total and earned_today
-                # The database is the source of truth, updated by earn_points()
-                logger.info(f"📊 DISPLAY VALUES: total={user_points.total_points}, earned_today={user_points.earned_today}")
-
-                # 计算本周积分 (简化实现)
-                earned_this_week = user_points.earned_today * 7  # 简化计算
-
-                return UserPoints(
-                    total_points=user_points.total_points,
-                    available_points=user_points.total_points,
-                    earned_today=user_points.earned_today,  # ✅ Use database value (source of truth)
-                    earned_this_week=earned_this_week
-                )
-            else:
+            # If no record exists, return zeros
+            # Records are created by award_daily_action_points() when points are awarded
+            if not user_points:
+                logger.info(f"📊 No points record for user {user_id} - returning zeros")
                 return UserPoints(
                     total_points=0,
                     available_points=0,
                     earned_today=0,
                     earned_this_week=0
                 )
-                
+
+            # ✅ READ-ONLY: Just return database values
+            # No calculations, no detection logic
+            # Points are awarded in real-time by background tasks
+            logger.info(f"📊 READ-ONLY: total_points={user_points.total_points}, earned_today={user_points.earned_today}")
+
+            # 计算本周积分 (简化实现)
+            earned_this_week = user_points.earned_today * 7  # 简化计算
+
+            return UserPoints(
+                total_points=user_points.total_points,
+                available_points=user_points.total_points,
+                earned_today=user_points.earned_today,  # ✅ Use database value (source of truth)
+                earned_this_week=earned_this_week
+            )
+
         finally:
             session.close()
         
