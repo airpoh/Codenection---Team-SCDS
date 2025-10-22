@@ -5,7 +5,7 @@ Handles user profile management, medical data, and health information.
 MIGRATED TO SQLALCHEMY for better performance (10-20x faster than REST API)
 """
 
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, BackgroundTasks
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime, date
 from typing import Optional, List, Dict, Any
@@ -330,6 +330,7 @@ def upload_avatar(
 @router.post("/profile/mood", response_model=Dict[str, Any])
 async def log_mood(
     mood_entry: MoodEntry,
+    background_tasks: BackgroundTasks,
     user: Dict[str, Any] = Depends(get_authenticated_user)
 ):
     """Log current mood for the user."""
@@ -349,12 +350,11 @@ async def log_mood(
         # ✅ Award points for setting mood (+5 points, once per day)
         try:
             from routers.rewards import award_daily_action_points
-            import asyncio
-            # Run in background without blocking
-            asyncio.create_task(award_daily_action_points(user_id, "set_mood_today", None))
-            logger.info(f"Mood logging points task created for user {user_id}")
+            # Use BackgroundTasks to ensure it runs after response is sent
+            background_tasks.add_task(award_daily_action_points, user_id, "set_mood_today")
+            logger.info(f"✅ Mood logging points job scheduled for user {user_id}")
         except Exception as e:
-            logger.warning(f"Failed to award mood logging points: {e}")
+            logger.error(f"❌ Failed to schedule mood logging points: {e}", exc_info=True)
 
         return {
             "message": "Mood logged successfully",
