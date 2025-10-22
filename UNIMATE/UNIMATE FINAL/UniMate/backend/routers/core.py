@@ -175,19 +175,9 @@ async def login(body: LoginIn):
     supabase_service = get_supabase_service()
     session = await supabase_service.sign_in_user(email, body.password)
 
-    # Award login points (+5 coins) - runs in background, doesn't block login
-    try:
-        user_id = session.get("user", {}).get("id")
-        if user_id:
-            from routers.rewards import award_daily_action_points
-            import asyncio
-
-            # Award login points asynchronously (don't await - let it run in background)
-            asyncio.create_task(award_daily_action_points(user_id, "login", None))
-            logger.info(f"Login points task created for user {user_id}")
-    except Exception as e:
-        # Don't fail login if points awarding fails
-        logger.warning(f"Failed to award login points: {e}")
+    # ✅ Login points are now awarded in profile.py get_user_profile endpoint
+    # This ensures points are awarded once per day when user loads their profile
+    # using proper BackgroundTasks instead of asyncio.create_task
 
     return {
         "access_token": session.get("access_token"),
