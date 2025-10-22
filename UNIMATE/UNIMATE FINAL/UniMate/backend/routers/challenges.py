@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 
 from routers.core_supabase import get_authenticated_user
 from services.supabase_client import supabase_service
+from services.redis_service import get_redis_client
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/challenges", tags=["challenges"])
@@ -440,6 +441,22 @@ async def complete_challenge(
                 "total_points": challenge_info["points_reward"]
             }
 
+        # ✅ CRITICAL FIX: Acquire distributed lock to prevent race conditions
+        # Lock key format: complete_challenge:{user_id}:{challenge_id}
+        redis_client = get_redis_client()
+        lock_key = f"complete_challenge:{user_id}:{request.challenge_id}"
+
+        # Try to acquire lock with 15 second TTL (enough time for blockchain tx)
+        lock_acquired = redis_client.acquire_lock(lock_key, ttl=15)
+
+        if not lock_acquired:
+            # Another request is already processing this challenge completion
+            logger.warning(f"⏳ Duplicate claim attempt blocked for user {user_id}, challenge {request.challenge_id}")
+            raise HTTPException(
+                status_code=409,
+                detail="Challenge completion already in progress. Please wait."
+            )
+
         session = blockchain_db()
         try:
             # Handle challenge ID conversion (c1 -> 1)
@@ -578,11 +595,18 @@ async def complete_challenge(
             
         finally:
             session.close()
-            
+            # ✅ Always release the lock when done (success or failure)
+            if lock_acquired:
+                redis_client.release_lock(lock_key)
+                logger.debug(f"🔓 Released lock for challenge completion: {lock_key}")
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Failed to complete challenge: {e}")
+        # ✅ Release lock on error too
+        if 'lock_acquired' in locals() and lock_acquired:
+            redis_client.release_lock(lock_key)
         raise HTTPException(status_code=500, detail="Failed to complete challenge")
 
 @router.get("/progress")
