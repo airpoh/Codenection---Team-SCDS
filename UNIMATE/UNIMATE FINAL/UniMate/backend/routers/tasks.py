@@ -5,7 +5,7 @@ Handles task management, reminders, and calendar functionality.
 MIGRATED TO SQLALCHEMY for better performance (10-20x faster than REST API)
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field
 from datetime import datetime
@@ -133,6 +133,7 @@ def get_tasks(
 @router.post("", response_model=Task)
 async def create_task(
     task: TaskCreate,
+    background_tasks: BackgroundTasks,
     user: Dict[str, Any] = Depends(get_authenticated_user)
 ):
     """Create a new task."""
@@ -182,12 +183,11 @@ async def create_task(
         # ✅ Award points for adding a task (+5 points, once per day)
         try:
             from routers.rewards import award_daily_action_points
-            import asyncio
-            # Run in background without blocking
-            asyncio.create_task(award_daily_action_points(user_id, "add_task", None))
-            logger.info(f"Task creation points task created for user {user_id}")
+            # Use BackgroundTasks to ensure it runs after response is sent
+            background_tasks.add_task(award_daily_action_points, user_id, "add_task")
+            logger.info(f"✅ Task creation points job scheduled for user {user_id}")
         except Exception as e:
-            logger.warning(f"Failed to award task creation points: {e}")
+            logger.error(f"❌ Failed to schedule task creation points: {e}", exc_info=True)
 
         return result
 
@@ -252,6 +252,7 @@ def get_reminders(
 @router.post("/reminders", response_model=Reminder)
 def create_reminder(
     reminder: ReminderCreate,
+    background_tasks: BackgroundTasks,
     user: Dict[str, Any] = Depends(get_authenticated_user)
 ):
     """Create a new reminder."""
