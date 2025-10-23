@@ -512,6 +512,9 @@ async def complete_challenge(
             user_challenge.status = "completed"
             user_challenge.completed_at = current_time
 
+            # ✅ CRITICAL: Flush to make the status change visible to subsequent queries
+            session.flush()
+
             # 使用rewards.py的积分系统来获得积分
             try:
                 from routers.rewards import earn_points, award_daily_action_points
