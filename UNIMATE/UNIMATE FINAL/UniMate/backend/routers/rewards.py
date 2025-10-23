@@ -27,7 +27,8 @@ try:
         log_voucher_redemption,
         log_points_earned,
         log_points_exchanged,
-        log_challenge_completed
+        log_challenge_completed,
+        get_user_activity_logs
     )
     ACTIVITY_LOGGING_ENABLED = True
 except ImportError:
@@ -309,28 +310,28 @@ async def get_points_history(
     """获取积分历史记录"""
     try:
         user_id = user["sub"]
-        
-        # TODO: 从数据库获取积分历史
-        
-        # 暂时返回模拟数据
-        return [
-            PointsTransaction(
-                id="1",
+
+        if not ACTIVITY_LOGGING_ENABLED:
+            logger.warning("Activity logging not enabled, returning empty history")
+            return []
+
+        # ✅ Get real points history from activity logs
+        activity_logs = get_user_activity_logs(user_id, limit=limit, activity_type="points_earned")
+
+        # Convert activity logs to PointsTransaction format
+        transactions = []
+        for log in activity_logs:
+            details = log.get("details", {})
+            transactions.append(PointsTransaction(
+                id=log.get("id", ""),
                 type="earned",
-                amount=50,
-                source="wellness_checkin",
-                description="Complete daily wellness check-in",
-                created_at=datetime.now()
-            ),
-            PointsTransaction(
-                id="2",
-                type="earned",
-                amount=100,
-                source="task_completion",
-                description="Complete 3 tasks today",
-                created_at=datetime.now()
-            )
-        ]
+                amount=details.get("points_earned", 0),
+                source=details.get("source", "unknown"),
+                description=details.get("description", "Points earned"),
+                created_at=datetime.fromisoformat(log.get("created_at", datetime.now().isoformat()))
+            ))
+
+        return transactions
         
     except Exception as e:
         logger.error(f"Failed to get points history: {e}")
