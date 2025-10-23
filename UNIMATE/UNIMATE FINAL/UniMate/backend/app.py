@@ -5,7 +5,9 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 import logging
-
+import os 
+port = int(os.getenv("PORT", 8000))
+uvicorn.run(app, host="0.0.0.0", port = port)
 from config import ALLOWED_ORIGINS, settings
 from models import init_database
 from routers.core import router as core_router
