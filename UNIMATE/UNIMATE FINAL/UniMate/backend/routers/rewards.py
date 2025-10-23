@@ -1186,9 +1186,8 @@ def award_daily_action_points(user_id: str, action_id: str):
             )
             session.add(user_points)
 
-        session.commit()
-
-        # Log the points earning activity
+        # ✅ FIX: Log activity BEFORE commit to prevent race condition
+        # This ensures duplicate requests see the log and return early
         if ACTIVITY_LOGGING_ENABLED:
             try:
                 log_points_earned(
@@ -1201,6 +1200,9 @@ def award_daily_action_points(user_id: str, action_id: str):
                 )
             except Exception as log_error:
                 logger.warning(f"Failed to log points earning activity: {log_error}")
+
+        # ✅ Commit AFTER logging activity to prevent race condition
+        session.commit()
 
         logger.info(f"✅ Awarded {points_amount} points for {action_id} to user {user_id}")
         return True
