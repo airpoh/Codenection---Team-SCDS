@@ -250,7 +250,7 @@ def get_reminders(
 
 
 @router.post("/reminders", response_model=Reminder)
-def create_reminder(
+async def create_reminder(
     reminder: ReminderCreate,
     background_tasks: BackgroundTasks,
     user: Dict[str, Any] = Depends(get_authenticated_user)
@@ -277,6 +277,16 @@ def create_reminder(
         session.refresh(new_reminder)
 
         logger.info(f"Created reminder: {new_reminder.title} for user {user_id}")
+
+        # ✅ Award points for adding a reminder (+10 points, once per day)
+        try:
+            from routers.rewards import award_daily_action_points
+            # Use BackgroundTasks to ensure it runs after response is sent
+            background_tasks.add_task(award_daily_action_points, user_id, "add_reminder")
+            logger.info(f"✅ Reminder creation points job scheduled for user {user_id}")
+        except Exception as e:
+            logger.error(f"❌ Failed to schedule reminder creation points: {e}", exc_info=True)
+
         return Reminder(
             id=str(new_reminder.id),
             user_id=new_reminder.user_id,
