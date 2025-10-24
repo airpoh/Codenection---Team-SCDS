@@ -58,9 +58,9 @@ import type {
   DeleteResponse,
 } from '../types/api';
 
-// Development configuration
-export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://unimate-team-scds.onrender.com";
+// API Base URL from environment variable
+// Falls back to localhost if not set
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
 
 class ApiService {
