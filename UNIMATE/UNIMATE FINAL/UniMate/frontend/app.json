@@ -25,6 +25,7 @@
       }
     },
     "android": {
+      "package": "com.justinpoh2808.unimate",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -54,9 +55,6 @@
         {
           "icon": "./assets/icon.png",
           "color": "#ffffff",
-          "sounds": [
-            "./assets/notification-sound.wav"
-          ],
           "mode": "production"
         }
       ]
