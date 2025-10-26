@@ -7,6 +7,20 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider } from './src/contexts/AuthContext';
 import * as Linking from 'expo-linking';
+import { useFonts } from 'expo-font';
+import {
+  Montserrat_400Regular,
+  Montserrat_400Regular_Italic,
+  Montserrat_500Medium,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
+import {
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+} from '@expo-google-fonts/poppins';
 
 // ✅ Import notification service
 import {
@@ -79,6 +93,19 @@ const linking = {
 };
 
 export default function App() {
+  // ✅ Load custom fonts
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_400Regular_Italic,
+    Montserrat_500Medium,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+  });
+
   // ✅ Create ref for navigation (needed for deep linking from notifications)
   const navigationRef = useRef<any>(null);
 
@@ -104,6 +131,11 @@ export default function App() {
       }
     };
   }, []);
+
+  // ✅ Wait for fonts to load before rendering app
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <AuthProvider>
