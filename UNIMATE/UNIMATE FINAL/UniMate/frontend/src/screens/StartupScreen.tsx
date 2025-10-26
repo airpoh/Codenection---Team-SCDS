@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../theme/colors";
@@ -31,7 +32,7 @@ export default function StartupScreen({ navigation }: Props) {
       style={styles.fill}
     >
       <SafeAreaView style={styles.fill}>
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container} bounces={false}>
           {/* Brand / Title */}
           <View style={styles.brandBlock}>
             <Image source={LOGO} style={styles.brandLogo} contentFit="contain" />
@@ -63,7 +64,7 @@ export default function StartupScreen({ navigation }: Props) {
               <Text style={styles.secondary}>No account?</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -72,8 +73,9 @@ export default function StartupScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: "center",
+    minHeight: height,
   },
   brandBlock: {
     marginTop: height * 0.02,
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
   subtitle: {
     marginTop: 6,
     fontSize: 20,
-    fontWeight: 500,
+    fontWeight: "500",
     fontFamily: fonts.body, // ensure theme body font
     color: "#111",
     opacity: 0.7,
@@ -104,29 +106,29 @@ const styles = StyleSheet.create({
   bottomBlock: {
     width: "86%",
     alignItems: "center",
-    paddingBottom: 24,
+    paddingBottom: 40,
   },
   welcome: {
     fontSize: 20,
     fontFamily: fonts.body, // theme font
     color: colors.textBlack,
     marginBottom: 20,
-    fontWeight: "700",
+    fontWeight: "600",
   },
   caption: {
     textAlign: "center",
     color: "#111",
     opacity: 0.65,
     fontSize: fontSize.body,
-    fontWeight: 500,
+    fontWeight: "500",
     lineHeight: 20,
-    marginBottom: 14,
+    marginBottom: 12,
     fontFamily: fonts.body, // theme font
   },
   secondary: {
     marginTop: 5,
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: "600",
     color: colors.primaryDark,
     opacity: 0.55,
     fontFamily: fonts.body, // theme font
