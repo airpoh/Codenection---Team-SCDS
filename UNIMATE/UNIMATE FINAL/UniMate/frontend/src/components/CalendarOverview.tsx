@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  monthText: { fontFamily: fonts.body, fontSize: 30, fontWeight: "600", color: "#4d4752" },
+  monthText: { fontFamily: fonts.body, fontSize: 20, fontWeight: "600", color: "#4d4752" },
   monthTextActive: { fontFamily: fonts.heading, color: "#4d4752" },
 
   dayCard: {
@@ -205,20 +205,20 @@ const styles = StyleSheet.create({
   weekday: {
     fontSize: 14,
     fontWeight: "500",
-    fontStyle: "italic",
+    fontFamily: fonts.bodyItalic,
     color: "rgba(0,0,0,0.6)",
     marginBottom: 2,
   },
   bigDay: {
     fontFamily: fonts.heading,
-    fontSize: 45,           // smaller
+    fontSize: 32,           // smaller
     fontWeight: "700",
     color: "#111",
     lineHeight: 45,
   },
   bigMonth: {
     fontFamily: fonts.heading,
-    fontSize: 45,           // smaller
+    fontSize: 32,           // smaller
     fontWeight: "700",
     color: "#111",
     letterSpacing: 2,
