@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   headerRow: { flexDirection: "row", alignItems: "center" },
-  hTitle: { fontFamily: fonts.heading, fontWeight: '800', fontSize: 32, color: "#f6f0f0ff" },
+  hTitle: { fontFamily: fonts.heading, fontWeight: '800', fontSize: 25, color: "#f6f0f0ff" },
   hSub: { marginTop: 4, fontFamily: fonts.body, fontSize: 14, color: "rgba(255, 255, 255, 0.75)" },
 
   ringOuter: {
@@ -372,8 +372,8 @@ const styles = StyleSheet.create({
     elevation: 6,
     alignSelf: "center",
   },
-  cardNo: { fontFamily: fonts.heading, fontSize: 22, fontWeight: '700', letterSpacing: 1 },
-  cardTitle: { fontFamily: fonts.heading, fontSize: 22, fontWeight: '800', marginTop: 4 },
+  cardNo: { fontFamily: fonts.heading, fontSize: 20, fontWeight: '700', letterSpacing: 1 },
+  cardTitle: { fontFamily: fonts.heading, fontSize: 20, fontWeight: '700', marginTop: 4 },
   cardSub: { fontFamily: fonts.body, fontSize: 14, marginTop: 4 },
 
   pillsRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 16 },
@@ -406,5 +406,5 @@ const styles = StyleSheet.create({
   ctaLight: { backgroundColor: "rgba(63, 61, 56, 0.9)" },
   ctaText: { fontFamily: fonts.heading, fontWeight: '700', fontSize: 14, color: "#FFA41D" },
 
-  char: { width: 84, height: 120, alignSelf: "flex-end" },
+  char: { width: 84, height: 120, alignSelf: "flex-start" },
 });
