@@ -120,7 +120,7 @@ export default function MyRewardsScreen() {
         >
           {/* Glowy image block (left) */}
           <View style={styles.imageStack}>
-            <Image source={MYREWARDS_IMG} style={{ width: 200, height: 200, marginRight: 6 }} />
+            <Image source={MYREWARDS_IMG} style={{ width: 100, height: 100, marginRight: 6 }} />
           </View>
 
           {/* Figures (right) */}
