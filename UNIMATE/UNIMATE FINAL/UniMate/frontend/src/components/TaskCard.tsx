@@ -50,9 +50,9 @@ export default function TaskCard({ title, start, end, colors = ["#EADBF7", "#F3D
       )}
 
       <View style={styles.row}>
-        <View style={styles.timeBlock}>
-          <Text style={styles.time}>{fmtTime(start)}</Text>
-          <Text style={styles.timeLabel}>Start</Text>
+        <View style={[styles.timeBlock, { alignItems: "flex-start" }]}>
+          <Text style={[styles.time, { textAlign: "left" }]}>{fmtTime(start)}</Text>
+          <Text style={[styles.timeLabel, { textAlign: "left" }]}>Start</Text>
         </View>
 
         <View style={styles.durationChip}>
@@ -60,8 +60,8 @@ export default function TaskCard({ title, start, end, colors = ["#EADBF7", "#F3D
         </View>
 
         <View style={[styles.timeBlock, { alignItems: "flex-end" }]}>
-          <Text style={styles.time}>{fmtTime(end)}</Text>
-          <Text style={styles.timeLabel}>End</Text>
+          <Text style={[styles.time, { textAlign: "right" }]}>{fmtTime(end)}</Text>
+          <Text style={[styles.timeLabel, { textAlign: "right" }]}>End</Text>
         </View>
       </View>
     </LinearGradient>
