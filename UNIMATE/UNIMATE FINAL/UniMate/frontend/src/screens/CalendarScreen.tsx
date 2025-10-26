@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiService } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 import { parseISO, startOfDay } from "date-fns";
+import { scheduleTaskNotification, scheduleReminderNotification } from "../../services/notificationService";
 
 // custom pickers
 import CustomDatePicker from "../components/CustomDatePicker";
@@ -185,6 +186,17 @@ export default function CalendarScreen() {
             const localOnly = prevTasks.filter(t => !backendIds.has(t.id));
             return [...backendTasks, ...localOnly];
           });
+
+          // ✅ Schedule notifications for all loaded tasks
+          for (const task of response.tasks.filter((t: any) => !t.is_completed)) {
+            const startTime = task.starts_at ? parseISO(task.starts_at) : new Date();
+            await scheduleTaskNotification(
+              task.id,
+              task.title,
+              startTime,
+              task.remind_minutes_before || 30
+            );
+          }
         }
       } catch (error) {
         console.log('Failed to load tasks from backend:', error);
@@ -213,6 +225,16 @@ export default function CalendarScreen() {
             const localOnly = prevReminders.filter(r => !backendIds.has(r.id));
             return [...backendReminders, ...localOnly];
           });
+
+          // ✅ Schedule notifications for all loaded reminders
+          for (const reminder of response.reminders) {
+            const reminderTime = reminder.reminder_time ? parseISO(reminder.reminder_time) : new Date();
+            await scheduleReminderNotification(
+              reminder.id,
+              reminder.title,
+              reminderTime
+            );
+          }
         } else {
           console.log('[CalendarScreen] No reminders from backend, error:', response.error);
         }
@@ -383,6 +405,14 @@ export default function CalendarScreen() {
               sameDay: sameDay(newTask.start, now)
             });
             setTasks((prev) => [...prev, newTask]);
+
+            // ✅ Schedule local notification for the task
+            await scheduleTaskNotification(
+              response.task!.id,
+              response.task!.title,
+              start,
+              parseInt(remindMinutesBefore) || 30
+            );
           } else {
             console.log('Failed to create task in backend:', response.error);
             // Fallback to local task creation
@@ -449,6 +479,13 @@ export default function CalendarScreen() {
                 colors: pair
               },
             ]);
+
+            // ✅ Schedule local notification for the reminder
+            await scheduleReminderNotification(
+              response.reminder!.id,
+              response.reminder!.title,
+              at
+            );
           } else {
             console.log('Failed to create reminder in backend:', response.error);
             // Fallback to local reminder creation
@@ -861,24 +898,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   segmentPillActive: { backgroundColor: "#fff" },
-  segmentText: { fontFamily: fonts.body, fontSize: 20, fontWeight: 600, color: "rgba(0,0,0,0.6)" },
+  segmentText: { fontFamily: fonts.body, fontSize: 14, fontWeight: "600", color: "rgba(0,0,0,0.6)" },
   segmentTextActive: { color: "#111" },
   addBtn: { marginLeft: "auto" },
 
   headerRow: { flexDirection: "row", alignItems: "center", marginTop: 15 },
-  dayName: { fontSize: 20, color: "rgba(0,0,0,0.6)", marginBottom: 10, fontStyle: "italic" },
-  bigDay: { fontFamily: fonts.heading, fontSize: 45, fontWeight: "700", color: "#111", lineHeight: 55, marginTop: -6 },
-  bigMonth: { fontFamily: fonts.heading, fontSize: 45, color: "#111", letterSpacing: 2, marginTop: -6, fontWeight: "700" },
+  dayName: { fontSize: 14, color: "rgba(0,0,0,0.6)", marginBottom: 10, fontFamily: fonts.bodyItalic },
+  bigDay: { fontFamily: fonts.heading, fontSize: 40, fontWeight: "700", color: "#111", lineHeight: 55, marginTop: -6 },
+  bigMonth: { fontFamily: fonts.heading, fontSize: 40, color: "#111", letterSpacing: 2, marginTop: -6, fontWeight: "700" },
   vDivider: { width: 3, alignSelf: "stretch", backgroundColor: "rgba(47, 43, 43, 0.94)", marginHorizontal: 10 },
 
-  rightTime: { fontFamily: fonts.heading, fontSize: 20, fontWeight:600, color: "#111" },
-  rightSub: { fontStyle: "italic", fontSize: 14, color: "rgba(0,0,0,0.55)", marginTop: 2, letterSpacing: 0.2 },
+  rightTime: { fontFamily: fonts.heading, fontSize: 20, fontWeight: "600", color: "#111" },
+  rightSub: { fontFamily: fonts.bodyItalic, fontSize: 14, color: "rgba(0,0,0,0.55)", marginTop: 2, letterSpacing: 0.2 },
 
   innerCard: { backgroundColor: "#fff", borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10, marginTop: 20 },
   innerTabs: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  innerTabPill: { height: 40, borderRadius: 30, paddingHorizontal: 30, backgroundColor: "rgba(0,0,0,0.06)", alignItems: "center", justifyContent: "center" },
+  innerTabPill: { height: 40, borderRadius: 30, paddingHorizontal: 10, backgroundColor: "rgba(0,0,0,0.06)", alignItems: "center", justifyContent: "center" },
   innerTabActive: { backgroundColor: colors.primaryDark },
-  innerTabText: { fontFamily: fonts.body, fontSize: 14, fontWeight:700, color: "rgba(0,0,0,0.65)" },
+  innerTabText: { fontFamily: fonts.body, fontSize: 14, fontWeight: "500", color: "rgba(0,0,0,0.65)" },
   innerTabTextActive: { color: "#fff" },
 
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.25)" },
@@ -898,7 +935,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     elevation: 8,
   },
-  sheetTitle: { fontFamily: fonts.heading, fontSize: 20, fontWeight: 600, marginBottom: 20, color: "#222", textAlign:"center"},
+  sheetTitle: { fontFamily: fonts.heading, fontSize: 20, fontWeight: "600", marginBottom: 20, color: "#222", textAlign:"center"},
   choiceRow: { flexDirection: "row", gap: 15 },
   choiceBtn: {
     flex: 1,
@@ -910,9 +947,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 5,
   },
-  choiceText: { fontFamily: fonts.body, fontSize: 14, fontWeight: 600, color: "#282525ff" },
+  choiceText: { fontFamily: fonts.body, fontSize: 14, fontWeight: "600", color: "#282525ff" },
   cancelLink: { marginTop: 12, alignSelf: "center" },
-  cancelText: { fontFamily: fonts.body, marginTop: 10, fontSize: 14, fontWeight: 600, color: colors.secondary },
+  cancelText: { fontFamily: fonts.body, marginTop: 10, fontSize: 14, fontWeight: "600", color: colors.secondary },
 
   formCard: {
     position: "absolute",
@@ -931,15 +968,15 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   formHeader: { borderRadius: 30, padding: 15, marginBottom: 20 },
-  formTitle: { fontFamily: fonts.heading, fontSize: 20, fontWeight: 700, color: "#211a1aff", textAlign: "center" },
-  label: { fontFamily: fonts.body, fontSize: 14, fontWeight: 600, color: "rgba(0,0,0,0.6)", marginBottom: 10 },
+  formTitle: { fontFamily: fonts.heading, fontSize: 20, fontWeight: "700", color: "#211a1aff", textAlign: "center" },
+  label: { fontFamily: fonts.body, fontSize: 14, fontWeight: "600", color: "rgba(0,0,0,0.6)", marginBottom: 10 },
   input: {
     height: 45,
     borderRadius: 20,
     paddingHorizontal: 20,
     backgroundColor: "rgba(0,0,0,0.06)",
     fontFamily: fonts.body,
-    fontWeight: 500,
+    fontWeight: "500",
     fontSize: 14,
     color: "#111",
   },
@@ -948,12 +985,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 20,
     backgroundColor: "rgba(0,0,0,0.06)",
-    fontWeight: 500,
+    fontWeight: "500",
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
   },
-  fieldText: { fontFamily: fonts.body, fontSize: 14, fontWeight: 500, color: "#111" },
+  fieldText: { fontFamily: fonts.body, fontSize: 14, fontWeight: "500", color: "#111" },
   timeRow: { flexDirection: "row", marginTop: 15 },
   actionsRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 30 },
   pillBtn: {
@@ -969,5 +1006,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  pillText: { fontFamily: fonts.heading, fontSize: 14, fontWeight: 600 },
+  pillText: { fontFamily: fonts.heading, fontSize: 14, fontWeight: "600" },
 });
