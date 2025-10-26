@@ -188,7 +188,7 @@ export default function SignUpScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   fill: { flex: 1, backgroundColor: "#F3F3F4" },
-  container: { paddingBottom: 28 },
+  container: { paddingBottom: 50 },
 
   topGrad: {
     marginHorizontal: 16,
@@ -214,13 +214,13 @@ const styles = StyleSheet.create({
 
   title: {
     fontFamily: fonts.heading,
-    fontSize: 36,
-    fontWeight: 600,
+    fontSize: 30,
+    fontWeight: "600",
     textAlign: "center",
     color: "#111",
     marginBottom: 18,
   },
-  label: { fontFamily: fonts.body, fontSize: 14, fontWeight: 500, color: "#222", marginBottom: 6 },
+  label: { fontFamily: fonts.body, fontSize: 14, fontWeight: "500", color: "#222", marginBottom: 6 },
   input: {
     height: 44,
     borderRadius: 130,
@@ -250,15 +250,15 @@ const styles = StyleSheet.create({
   disabledBtn: {
     backgroundColor: colors.secondary + '80', // 50% opacity
   },
-  primaryBtnText: { color: "#fff", fontFamily: fonts.heading, fontSize: 14, fontWeight: 600},
+  primaryBtnText: { color: "#fff", fontFamily: fonts.heading, fontSize: 14, fontWeight: "600"},
 
   smallFooter: {
     textAlign: "center",
     marginTop: 20,
     marginBottom: 12,
     fontFamily: fonts.body,
-    fontSize: 14,
-    fontWeight: 500,
+    fontSize: 12,
+    fontWeight: "500",
     color: "rgba(0,0,0,0.55)",
   },
   link: { color: colors.primaryDark, textDecorationLine: "underline" },
