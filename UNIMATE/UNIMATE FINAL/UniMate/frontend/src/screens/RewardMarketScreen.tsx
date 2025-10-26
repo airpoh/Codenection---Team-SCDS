@@ -87,39 +87,39 @@ const REDEEM_SECTIONS: Section<Reward>[] = [
   {
     title: 'Food & Beverages',
     data: [
-      { id: 'food_starbucks_10', title: 'Starbucks Malaysia RM10 Voucher', provider: 'Starbucks Malaysia', price: 500 },
-      { id: 'food_kfc_15', title: 'KFC Malaysia RM15 Voucher', provider: 'KFC Malaysia', price: 750 },
-      { id: 'food_mcd_12', title: "McDonald's Malaysia RM12 Voucher", provider: "McDonald's Malaysia", price: 600 },
+      { id: 'food_starbucks_10', title: 'Zus Coffee RM10 Voucher', provider: 'Zus Coffee', price: 500 },
+      { id: 'food_kfc_15', title: 'Set Lunch FREE Redeem', provider: 'Chinese Food Canteen', price: 750 },
+      { id: 'food_mcd_12', title: "Malatang RM10 Voucher", provider: "Malatang Canteen", price: 600 },
     ],
   },
   {
     title: 'Health & Wellness',
     data: [
-      { id: 'wellness_guardian_20', title: 'Guardian Malaysia RM20 Voucher', provider: 'Guardian Malaysia', price: 1000 },
-      { id: 'wellness_fitness_first_trial', title: 'Fitness First - 3 Day Trial Pass', provider: 'Fitness First', price: 400 },
-      { id: 'wellness_yoga_class', title: 'Pure Yoga - Single Class Pass', provider: 'Pure Yoga', price: 350 },
+      { id: 'wellness_guardian_20', title: 'Tennis - 2 Class Pass', provider: 'Tennis Club', price: 1000 },
+      { id: 'wellness_fitness_first_trial', title: 'Swimming - Single Class Pass', provider: 'Swimming Club', price: 400 },
+      { id: 'wellness_yoga_class', title: 'Pure Yoga - Single Class Pass', provider: 'Yoga Club', price: 350 },
     ],
   },
   {
     title: 'Shopping & Services',
     data: [
-      { id: 'shopping_grab_10', title: 'Grab Malaysia RM10 Credit', provider: 'Grab Malaysia', price: 500 },
-      { id: 'shopping_shopee_15', title: 'Shopee Malaysia RM15 Voucher', provider: 'Shopee Malaysia', price: 750 },
-      { id: 'shopping_lazada_12', title: 'Lazada Malaysia RM12 Voucher', provider: 'Lazada Malaysia', price: 600 },
+      { id: 'shopping_grab_10', title: 'Minimart RM10 Credit', provider: 'Minimart', price: 500 },
+      { id: 'shopping_shopee_15', title: 'XMUM Hoodie RM15 Voucher', provider: 'XMUM ECA', price: 750 },
+      { id: 'shopping_lazada_12', title: 'Sport Month Tee RM10 Voucher', provider: 'XMUM ECA', price: 600 },
     ],
   },
   {
     title: 'Education & Learning',
     data: [
-      { id: 'education_coursera_month', title: 'Coursera Plus - 1 Month Free', provider: 'Coursera', price: 800 },
-      { id: 'education_udemy_discount', title: 'Udemy - 50% Discount Coupon', provider: 'Udemy', price: 300 },
+      { id: 'education_coursera_month', title: 'Mobile App Building Workshop', provider: 'Computer Club', price: 800 },
+      { id: 'education_udemy_discount', title: 'Self-Care Workshop', provider: 'Counselling Centre', price: 300 },
     ],
   },
   {
     title: 'Entertainment & Media',
     data: [
-      { id: 'entertainment_tgv_ticket', title: 'TGV Cinemas - Movie Ticket', provider: 'TGV Cinemas', price: 900 },
-      { id: 'entertainment_spotify_premium', title: 'Spotify Premium - 1 Month', provider: 'Spotify', price: 450 },
+      { id: 'entertainment_tgv_ticket', title: 'Mini Cinema Friday Movie Ticket ', provider: 'Mini Cinema', price: 900 },
+      { id: 'entertainment_spotify_premium', title: 'KPOP Dance Competition Ticket RM15 Voucher ', provider: 'Dancing Cub', price: 450 },
     ],
   },
 ];
@@ -294,7 +294,7 @@ export default function RewardMarketScreen() {
           <View style={{ width: 28 }} />
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
+            hitSlop={{ top: 20, left: 10, right: 10, bottom: 10 }}
           >
             <Image source={LEAVE} style={{ width: 25, height: 25 }} />
           </TouchableOpacity>
@@ -322,7 +322,7 @@ export default function RewardMarketScreen() {
               >
                 {/* glowy coin stack */}
                 <View style={styles.coinStack}>
-                  <Image source={REWARD} style={{ width: 200, height: 200, marginRight: 6 }} />
+                  <Image source={REWARD} style={{ width: 100, height: 100, marginRight: 6 }} />
                 </View>
 
                 <View style={{ alignItems: 'flex-end' }}>
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   },
 
   welcome: { color: COLORS.sub, fontSize: 14 },
-  title: { color: COLORS.ink, fontSize: 32, fontWeight: '800', marginTop: 2 },
+  title: { color: COLORS.ink, fontSize: 30, fontWeight: '800', marginTop: 2 },
 
   goldWrap: { position: 'relative', paddingBottom: 30 },
   goldCard: {
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginBottom: 20,
   },
-  secHeaderText: { fontSize: 20, fontWeight: '800', color: COLORS.lilacDark },
+  secHeaderText: { fontSize: 14, fontWeight: '700', color: COLORS.lilacDark },
 
   // Earn rows
   earnRow: {
@@ -655,22 +655,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
-  earnLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  earnLeft: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, flex: 1, paddingRight: 10 },
   badge: {
     width: 22,
     height: 22,
     borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 1,
   },
   badgeTodo: { backgroundColor: 'rgba(255,255,255,0.25)' },
   badgeDone: { backgroundColor: '#FFFFFF' },
   badgeTextTodo: { color: '#FFF', fontWeight: '900' },
   badgeTextDone: { color: COLORS.lilacDark, fontWeight: '900' },
 
-  earnLabel: { fontWeight: '700', fontSize: 14 },
+  earnLabel: { fontWeight: '700', fontSize: 14, flex: 1, flexWrap: 'wrap' },
 
   coinPill: {
     backgroundColor: '#8A61E0',
@@ -679,6 +680,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: -3,
   },
 
   // Redeem tickets
@@ -723,8 +725,8 @@ const styles = StyleSheet.create({
     borderRightWidth: 2,
     borderColor: 'rgba(255,255,255,0.35)',
   },
-  ticketProvider: { color: COLORS.white, opacity: 0.9, fontWeight: '700' },
-  ticketTitle: { color: COLORS.white, fontWeight: '900', fontSize: 16, marginTop: 2 },
+  ticketProvider: { color: COLORS.white, opacity: 0.9, fontSize: 12, fontWeight: '500' },
+  ticketTitle: { color: COLORS.white, fontWeight: '700', fontSize: 14, marginTop: 2 },
 
   pricePill: {
     borderRadius: 14,
@@ -753,7 +755,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
   },
-  sheetTitle: { fontSize: 28, fontWeight: '800', color: COLORS.ink, textAlign: 'center', marginBottom: 12 },
+  sheetTitle: { fontSize: 30, fontWeight: '700', color: COLORS.ink, textAlign: 'center', marginBottom: 12 },
   sheetBody: { color: COLORS.sub, marginTop: 4 },
   sheetRow: { flexDirection: 'row', gap: 10, marginTop: 16 },
   sheetBtn: {
@@ -764,5 +766,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sheetBtnPrimary: { backgroundColor: COLORS.lilac },
-  sheetBtnLabel: { fontWeight: '900', color: COLORS.sub },
+  sheetBtnLabel: { fontWeight: '700', color: COLORS.sub },
 });
