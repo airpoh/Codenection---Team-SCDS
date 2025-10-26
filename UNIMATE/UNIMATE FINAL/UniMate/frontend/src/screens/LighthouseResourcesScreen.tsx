@@ -34,7 +34,7 @@ export default function LighthouseResourcesScreen({ navigation }: any) {
             <Card
               title="Campus Counselling"
               sub="Talk to us in the campus"
-              right="WEEKDAYS 9AM-5PM"
+              right="9AM-5PM"
               action="03-84081748"
             />
           </View>
@@ -85,13 +85,13 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", shadowColor: "#000",
     shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
   },
-  cardTitle: { fontFamily: fonts.heading, fontSize: 14, fontWeight: 600, color: "#f57ed7ff" },
-  cardSub: { marginTop: 2, color: "rgba(0,0,0,0.6)", fontSize: 14, fontWeight: 400,},
+  cardTitle: { fontFamily: fonts.heading, fontSize: 14, fontWeight: "600", color: "#f57ed7ff" },
+  cardSub: { marginTop: 2, color: "rgba(0,0,0,0.6)", fontSize: 14, fontWeight: "400",},
   pill: { backgroundColor: "#deddd9ff", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, marginLeft: 10 },
   pillText: { fontSize: 11, color: "#333531ff" },
   cardAction: { fontFamily: fonts.body, color: "#111", fontSize: 12 },
 
-  note: { marginTop: 25, textAlign: "center", color: "rgba(255, 255, 255, 1)", fontStyle: "italic" },
+  note: { marginTop: 25, textAlign: "center", color: "rgba(255, 255, 255, 1)", fontFamily: fonts.bodyItalic },
   backBtn: {
     alignSelf: "center", marginTop: 16, backgroundColor: "#fbf1d7",
     paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20,
