@@ -64,7 +64,7 @@ export default function LighthouseEmergency() {
             // Extract medical info
             if (user.medical_info) {
               setMedicalInfo(user.medical_info);
-            } else if (user.blood_type || user.allergies) {
+            } else if ((user as any).blood_type || (user as any).allergies) {
               // Handle legacy format where medical fields are directly on user object
               setMedicalInfo({
                 blood_type: (user as any).blood_type,
@@ -179,21 +179,29 @@ export default function LighthouseEmergency() {
             console.log('Opening WhatsApp URL:', whatsappUrl);
 
             try {
-              const canOpen = await Linking.canOpenURL(whatsappUrl);
-              if (canOpen) {
-                await Linking.openURL(whatsappUrl);
-              } else {
+              // Try to open WhatsApp directly
+              // Note: On Android 11+, canOpenURL may return false even when WhatsApp is installed
+              // unless intent queries are configured. So we try to open directly instead.
+              await Linking.openURL(whatsappUrl);
+            } catch (e) {
+              console.error('WhatsApp error:', e);
+
+              // If opening fails, check if it's actually available
+              const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+              const isNotInstalled = errorMessage.toLowerCase().includes('no activity found') ||
+                                     errorMessage.toLowerCase().includes('unable to resolve');
+
+              if (isNotInstalled) {
                 Alert.alert(
                   "WhatsApp Not Available",
                   "WhatsApp is not installed on this device. Please install WhatsApp or use the Call option."
                 );
+              } else {
+                Alert.alert(
+                  "Unable to Open WhatsApp",
+                  `Could not open WhatsApp. Error: ${errorMessage}`
+                );
               }
-            } catch (e) {
-              console.error('WhatsApp error:', e);
-              Alert.alert(
-                "Unable to Open WhatsApp",
-                `Could not open WhatsApp. Error: ${e instanceof Error ? e.message : 'Unknown error'}`
-              );
             }
           },
         },
