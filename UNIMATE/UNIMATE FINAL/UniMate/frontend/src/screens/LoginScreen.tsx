@@ -217,10 +217,10 @@ export default function LoginScreen({ navigation }: Props) {
                 />
               )}
 
-              <View style={{ marginTop: "auto", alignItems: "center" }}>
-                <View style={{ height: 20 }} />
+              <View style={{ marginTop: 40, alignItems: "center" }}>
+                <View style={{ height: 10 }} />
                 <Text style={styles.footerText}>
-                  Haven’t created account yet?{" "}
+                  Haven't created account yet?{" "}
                   <Text style={styles.footerLink} onPress={() => navigation.navigate("SignUp")}>
                     Create one
                   </Text>
@@ -240,18 +240,17 @@ const styles = StyleSheet.create({
   header: { height: height * 0.24, alignItems: "center", justifyContent: "center" },
   logo: { width: 200, height: 200 },
   sheet: {
-    flexGrow: 1,
     minHeight: height * 0.66,
     backgroundColor: "#fff",
     borderTopLeftRadius: SHEET_RADIUS,
     borderTopRightRadius: SHEET_RADIUS,
     paddingHorizontal: 20,
     paddingTop: 25,
-    paddingBottom: 20,
+    paddingBottom: 50,
   },
-  title: { textAlign: "center", fontFamily: fonts.heading, fontSize: 32, fontWeight: 600, color: "#111" },
+  title: { textAlign: "center", fontFamily: fonts.heading, fontSize: 30, fontWeight: 600, color: "#111" },
   inputLabel: { fontSize: 14, fontWeight: 500 },
-  forgot: { marginTop: 8, fontFamily: fonts.body, fontSize: fontSize.body, color: "rgba(17,17,17,0.6)" },
+  forgot: { marginTop: 8, fontFamily: fonts.body, fontSize: 12, color: "rgba(17,17,17,0.6)" },
   footerText: { fontFamily: fonts.body, fontSize: 14, fontWeight: 500, color: "#111", textAlign: "center" },
   footerLink: { color: colors.secondary, fontFamily: fonts.body, fontSize: fontSize.body },
 });
