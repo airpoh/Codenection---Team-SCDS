@@ -8,4 +8,5 @@ export const fontSize = {
 export const fonts = {
   heading: "Poppins_500Medium",
   body: "Montserrat_400Regular",
+  bodyItalic: "Montserrat_400Regular_Italic", // For italic text
 };
