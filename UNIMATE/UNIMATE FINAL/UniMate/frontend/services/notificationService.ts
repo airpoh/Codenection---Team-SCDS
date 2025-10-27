@@ -333,3 +333,98 @@ export async function clearAllNotifications(): Promise<void> {
   await Notifications.dismissAllNotificationsAsync();
   console.log('✅ All notifications cleared');
 }
+
+/**
+ * Schedule a local notification for a task reminder
+ *
+ * @param taskId Unique task ID
+ * @param title Task title
+ * @param startTime When the task starts
+ * @param remindMinutesBefore How many minutes before to show notification
+ * @returns Notification identifier
+ */
+export async function scheduleTaskNotification(
+  taskId: string,
+  title: string,
+  startTime: Date,
+  remindMinutesBefore: number = 30
+): Promise<string | null> {
+  try {
+    // Calculate when to trigger the notification
+    const triggerTime = new Date(startTime.getTime() - remindMinutesBefore * 60 * 1000);
+
+    // Don't schedule if the trigger time is in the past
+    if (triggerTime <= new Date()) {
+      console.log(`⏭️ Skipping task notification - trigger time is in the past (${triggerTime})`);
+      return null;
+    }
+
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '📝 Task Reminder',
+        body: `"${title}" starts in ${remindMinutesBefore} minutes`,
+        data: {
+          type: 'task_reminder',
+          task_id: taskId,
+          screen: 'Calendar',
+        },
+        sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+      },
+      trigger: triggerTime,
+    });
+
+    console.log(`✅ Task notification scheduled: "${title}" at ${triggerTime.toLocaleString()}`);
+    console.log(`   Notification ID: ${notificationId}`);
+
+    return notificationId;
+  } catch (error) {
+    console.error('❌ Failed to schedule task notification:', error);
+    return null;
+  }
+}
+
+/**
+ * Schedule a local notification for a reminder
+ *
+ * @param reminderId Unique reminder ID
+ * @param title Reminder title
+ * @param reminderTime When to trigger the reminder
+ * @returns Notification identifier
+ */
+export async function scheduleReminderNotification(
+  reminderId: string,
+  title: string,
+  reminderTime: Date
+): Promise<string | null> {
+  try {
+    // Don't schedule if the reminder time is in the past
+    if (reminderTime <= new Date()) {
+      console.log(`⏭️ Skipping reminder notification - time is in the past (${reminderTime})`);
+      return null;
+    }
+
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: '🔔 Reminder',
+        body: title,
+        data: {
+          type: 'reminder',
+          reminder_id: reminderId,
+          screen: 'Calendar',
+        },
+        sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+      },
+      trigger: reminderTime,
+    });
+
+    console.log(`✅ Reminder notification scheduled: "${title}" at ${reminderTime.toLocaleString()}`);
+    console.log(`   Notification ID: ${notificationId}`);
+
+    return notificationId;
+  } catch (error) {
+    console.error('❌ Failed to schedule reminder notification:', error);
+    return null;
+  }
+}
