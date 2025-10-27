@@ -76,13 +76,13 @@ type Placement = {
 // Base positions in ABSOLUTE PIXELS tuned to iPhone 13 Pro Max (428x926)
 // These will be scaled proportionally for other devices
 const BASE_PLACEMENTS: Placement[] = [
-  { key: "library", src: LIBRARY, left: -60, top: 265, width: 390 },
-  { key: "lighthouse", src: LIGHTHOUSE, left: 220, top: 275, width: 160 },
-  { key: "gym", src: GYM, left: 0, top: 485, width: 170 },
-  { key: "cafe", src: CAFE, left: 290, top: 420, width: 140 },
-  { key: "diary", src: DIARY, left: 290, top: 575, width: 150 },
-  { key: "reward", src: REWARD, left: 60, top: 565, width: 180 },
-  { key: "meditation", src: MEDITATION, left: 135, top: 445, width: 150 },
+  { key: "library", src: LIBRARY, left: -60, top: 275, width: 390 },
+  { key: "lighthouse", src: LIGHTHOUSE, left: 220, top: 285, width: 160 },
+  { key: "gym", src: GYM, left: 0, top: 495, width: 170 },
+  { key: "cafe", src: CAFE, left: 290, top: 430, width: 140 },
+  { key: "diary", src: DIARY, left: 290, top: 585, width: 150 },
+  { key: "reward", src: REWARD, left: 60, top: 575, width: 180 },
+  { key: "meditation", src: MEDITATION, left: 135, top: 455, width: 150 },
 ];
 
 // Apply uniform scaling to all placements
