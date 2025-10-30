@@ -3,9 +3,9 @@ FROM node:20-slim AS node-build
 WORKDIR /app/aa-test
     
 # 复制所有 JS 源码文件（如 mint-gasless.js 等脚本），以及 package*.json
-COPY backend/aa-test/*.js ./            
+COPY UniMate/backend/aa-test/*.js ./            
 # 覆盖全部 Node.js 脚本（如 mint-gasless.js、deploy-smart-account.js...）
-COPY backend/aa-test/package*.json ./   
+COPY UniMate/backend/aa-test/package*.json ./   
 # 覆盖依赖描述文件
     
 # 安装 Node 依赖
@@ -16,7 +16,7 @@ FROM python:3.10-slim
 WORKDIR /app
     
 # 复制 Python 代码到容器
-COPY backend /app
+COPY UniMate/backend /app
     
 # 连同 node_modules、全部脚本一起复制到目标目录
 COPY --from=node-build /app/aa-test /app/aa-test
