@@ -25,6 +25,7 @@ import asyncio
 from pydantic import validator, ValidationError, Field
 from enum import Enum
 from datetime import datetime, timedelta, timezone
+import shutil
 from config import (
     RPC, WELL, REDEMPTION_SYSTEM, ACHIEVEMENTS, PRIVATE_KEY,
     BICONOMY_PAYMASTER_API_KEY,  # PARTICLE_* removed
@@ -97,6 +98,31 @@ logger = logging.getLogger("unimate-api")
 
 # Use REDEMPTION_SYSTEM as the main redemption address, with RS as fallback
 REDEMPTION_ADDRESS = REDEMPTION_SYSTEM or RS
+
+# --- Diagnostics: container runtime checks (read-only) ---
+@router.get("/debug/env/aa-test")
+async def debug_env_aa_test():
+    """只读诊断：返回容器内与 aa-test 相关的路径与可执行文件可用性。
+
+    注意：不执行任何区块链操作，仅用于环境排查。
+    """
+    try:
+        # 解析后端内置的 aa-test 目录（按当前文件位置推导）
+        resolved_aa_test_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "aa-test")
+
+        return {
+            "cwd": os.getcwd(),
+            "resolved_aa_test_dir": resolved_aa_test_dir,
+            "exists_resolved": os.path.isdir(resolved_aa_test_dir),
+            "exists_/app/aa-test": os.path.isdir("/app/aa-test"),
+            "exists_/app/backend/aa-test": os.path.isdir("/app/backend/aa-test"),
+            "node_path": shutil.which("node"),
+            "npm_path": shutil.which("npm"),
+            "env_PATH": os.environ.get("PATH", ""),
+        }
+    except Exception as e:
+        logger.error(f"Debug env endpoint error: {e}")
+        raise HTTPException(500, detail=f"debug error: {str(e)}")
 
 # Security Configuration - Enhanced allowlisted addresses and function selectors
 class SecurityConfig:
