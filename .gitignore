@@ -1,24 +1,8 @@
-# Node / Expo / RN
-node_modules/
-.expo/
-.expo-shared/
-dist/
-coverage/
-.env
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Android / iOS builds
-android/.gradle/
-android/app/build/
-android/build/
-ios/Pods/
-ios/build/
-*.keystore
-*.jks
-
-# IDE / OS
-.vscode/
-.idea/
-.DS_Store
+# HashiCorp Vault (do not commit secrets!)
+vault-credentials.txt
+vault-data/
+.env.vault
+vault-pid.txt
+vault-server.log
+vault-config.hcl
