@@ -4,8 +4,8 @@ WORKDIR /app/aa-test
 # 先复制依赖声明以利用缓存
 COPY backend/aa-test/package*.json ./
 RUN npm ci
-# 再复制全部源码，确保包含所有脚本与资源
-COPY backend/aa-test/ ./
+# 再复制脚本文件，避免目录级 COPY 在远端上下文缺失时报错
+COPY backend/aa-test/*.js ./
 
 # ---- Python 运行阶段 ----
 FROM python:3.10-slim
