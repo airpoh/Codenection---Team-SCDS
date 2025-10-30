@@ -1,10 +1,11 @@
 # ---- Node 构建阶段：安装 JS 依赖和脚本 ----
 FROM node:20-slim AS node-build
 WORKDIR /app/aa-test
-# 复制全部 Node.js 脚本和依赖声明
-COPY backend/aa-test/*.js ./
+# 先复制依赖声明以利用缓存
 COPY backend/aa-test/package*.json ./
-RUN npm install
+RUN npm ci
+# 再复制全部源码，确保包含所有脚本与资源
+COPY backend/aa-test/ ./
 
 # ---- Python 运行阶段 ----
 FROM python:3.10-slim
