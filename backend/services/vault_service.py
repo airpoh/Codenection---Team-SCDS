@@ -306,6 +306,7 @@ def get_vault_client() -> VaultClient:
     - VAULT_ROLE_ID: AppRole role ID
     - VAULT_SECRET_ID: AppRole secret ID
     - VAULT_NAMESPACE: (Optional) Vault namespace
+    - VAULT_KV_MOUNT: (Optional) KV v2 mount point name (default: "secret")
 
     Returns:
         VaultClient instance
@@ -320,6 +321,7 @@ def get_vault_client() -> VaultClient:
         role_id = os.getenv("VAULT_ROLE_ID")
         secret_id = os.getenv("VAULT_SECRET_ID")
         namespace = os.getenv("VAULT_NAMESPACE")
+        kv_mount = os.getenv("VAULT_KV_MOUNT", "secret")
 
         if not all([vault_addr, role_id, secret_id]):
             raise VaultError(
@@ -327,11 +329,16 @@ def get_vault_client() -> VaultClient:
                 "VAULT_ADDR, VAULT_ROLE_ID, VAULT_SECRET_ID"
             )
 
+        logger.info(
+            f"Initializing Vault client (addr={vault_addr}, namespace={namespace or 'None'}, kv_mount={kv_mount})"
+        )
+
         _vault_client = VaultClient(
             vault_addr=vault_addr,
             role_id=role_id,
             secret_id=secret_id,
-            namespace=namespace
+            namespace=namespace,
+            mount_point=kv_mount
         )
 
     return _vault_client

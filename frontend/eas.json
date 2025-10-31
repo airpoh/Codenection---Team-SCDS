@@ -17,12 +17,20 @@
     "production": {
       "android": {
         "buildType": "app-bundle"
-      }
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://codenection-team-scds-production.up.railway.app"
+      },
+      "channel": "production"
     },
     "apk": {
       "android": {
         "buildType": "apk"
-      }
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://codenection-team-scds-production.up.railway.app"
+      },
+      "channel": "apk"
     }
   },
   "submit": {
