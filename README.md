@@ -36,8 +36,7 @@ Problems to Address: University students face immense pressure from mental healt
 3. Once installed, tap "Open" to launch UniMate.
 
 #### For iOS:
-<img width="282" height="285" alt="image" src="https://github.com/user-attachments/assets/70d600c4-afa9-4591-8b74-772ee37744fd" />
-
+<img width="277" height="278" alt="image" src="https://github.com/user-attachments/assets/2fa7e721-5385-4398-a246-5a879d4fffdb" />
 
 4. Install “Expo Go" App from AppStore.
 5. Scan the QR Code (From Camera) and click the link shown on Camera to the Expo Go app.

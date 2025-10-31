@@ -1,5 +1,0 @@
-[deploy]
-startCommand = "sh -c 'ln -sf /app/backend/aa-test /app/aa-test; cd /app/aa-test && (npm ci || npm install); cd /app; uvicorn app:app --host 0.0.0.0 --port $PORT'"
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 10
-
