@@ -96,6 +96,7 @@ class ApiService {
     try {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...(options.headers as Record<string, string>),
       };
 
@@ -104,10 +105,24 @@ class ApiService {
         headers['Authorization'] = `Bearer ${this.authToken}`;
       }
 
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const url = `${this.baseUrl}${endpoint}`;
+      const response = await fetch(url, {
         ...options,
         headers,
       });
+
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.toLowerCase().includes('application/json');
+
+      if (!isJson) {
+        const text = await response.text();
+        const preview = text.slice(0, 300);
+        const status = response.status;
+        return {
+          success: false,
+          error: `Non-JSON response (status ${status}). First bytes: ${preview}`,
+        };
+      }
 
       const result = await response.json();
 
