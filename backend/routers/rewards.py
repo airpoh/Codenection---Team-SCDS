@@ -1124,6 +1124,9 @@ def award_daily_action_points(user_id: str, action_id: str):
     Award points for completing a daily action (login, add_task, add_reminder, set_mood)
     This function runs as a FastAPI background task and manages its own DB session.
     Returns True if points were awarded, False if already completed today
+    
+    Uses database-level locking (SELECT FOR UPDATE) to prevent race conditions
+    when multiple requests try to award points simultaneously.
     """
     # Create a new database session for this background task
     session = blockchain_db()
@@ -1145,25 +1148,63 @@ def award_daily_action_points(user_id: str, action_id: str):
 
         points_amount = ACTION_POINTS[action_id]
         today_str_malaysia = datetime.now(MALAYSIA_TZ).strftime("%Y-%m-%d")
+        
+        # ✅ FIX: Use database-level atomic check within transaction
+        # Calculate start and end of today in Malaysia timezone, converted to UTC
+        start_of_today_malaysia = datetime.now(MALAYSIA_TZ).replace(hour=0, minute=0, second=0, microsecond=0)
+        end_of_today_malaysia = start_of_today_malaysia + timedelta(days=1)
+        
+        # Convert to UTC for database comparison (database stores timestamps in UTC)
+        start_of_today_utc = start_of_today_malaysia.astimezone(ZoneInfo("UTC"))
+        end_of_today_utc = end_of_today_malaysia.astimezone(ZoneInfo("UTC"))
 
-        # Check if already completed today by checking activity logs
+        # ✅ FIX: Check if already completed today using direct database query
+        # This is more reliable than calling get_user_activity_logs which may have caching issues
         if ACTIVITY_LOGGING_ENABLED:
-            from scripts.add_activity_logging import get_user_activity_logs
-
-            # Check if this action was already logged today
-            logs = get_user_activity_logs(user_id, limit=100, activity_type="points_earned")
-            for log in logs:
-                if log.get("details", {}).get("source") == f"daily_action_{action_id}":
-                    # Check if it's from today
-                    log_date = log.get("created_at", "")[:10]  # Extract YYYY-MM-DD
-                    if log_date == today_str_malaysia:
-                        logger.info(f"Action {action_id} already completed today for user {user_id}")
+            from models import ActivityLog
+            
+            # Direct database query to check if action was already completed today
+            # Query all points_earned logs for this user today, then filter by details.source in Python
+            logs_today = session.query(ActivityLog).filter(
+                ActivityLog.profile_id == user_id,
+                ActivityLog.activity_type == "points_earned",
+                ActivityLog.created_at >= start_of_today_utc,
+                ActivityLog.created_at < end_of_today_utc
+            ).all()
+            
+            # Check if any log has the matching source in details JSONB
+            for log in logs_today:
+                if log.details and isinstance(log.details, dict):
+                    if log.details.get("source") == f"daily_action_{action_id}":
+                        logger.info(f"⏭️  Action {action_id} already completed today for user {user_id} (found log ID: {log.id})")
                         return False
 
-        # Award points using this session
+        # ✅ FIX: Use SELECT FOR UPDATE to lock the user_points record
+        # This prevents concurrent requests from both awarding points
+        # Lock the user_points record for update (blocks other transactions until this one commits)
         user_points = session.query(BlockchainUserPoints).filter(
             BlockchainUserPoints.profile_id == user_id
-        ).first()
+        ).with_for_update().first()
+
+        # ✅ FIX: Double-check after acquiring lock (another request might have just completed)
+        # This is important because we check before locking, then lock, then check again
+        if ACTIVITY_LOGGING_ENABLED:
+            from models import ActivityLog
+            
+            # Re-check after lock to prevent race condition
+            logs_after_lock = session.query(ActivityLog).filter(
+                ActivityLog.profile_id == user_id,
+                ActivityLog.activity_type == "points_earned",
+                ActivityLog.created_at >= start_of_today_utc,
+                ActivityLog.created_at < end_of_today_utc
+            ).all()
+            
+            # Check if any log has the matching source in details JSONB
+            for log in logs_after_lock:
+                if log.details and isinstance(log.details, dict):
+                    if log.details.get("source") == f"daily_action_{action_id}":
+                        logger.info(f"⏭️  Action {action_id} already completed today for user {user_id} (found after lock, log ID: {log.id})")
+                        return False
 
         if user_points:
             # Check daily reset
@@ -1186,8 +1227,7 @@ def award_daily_action_points(user_id: str, action_id: str):
             )
             session.add(user_points)
 
-        # ✅ FIX: Log activity BEFORE commit to prevent race condition
-        # This ensures duplicate requests see the log and return early
+        # ✅ Log activity BEFORE commit to ensure it's visible for duplicate checks
         if ACTIVITY_LOGGING_ENABLED:
             try:
                 log_points_earned(
@@ -1200,8 +1240,9 @@ def award_daily_action_points(user_id: str, action_id: str):
                 )
             except Exception as log_error:
                 logger.warning(f"Failed to log points earning activity: {log_error}")
+                # Don't fail the entire operation if logging fails
 
-        # ✅ Commit AFTER logging activity to prevent race condition
+        # ✅ Commit transaction (releases lock)
         session.commit()
 
         logger.info(f"✅ Awarded {points_amount} points for {action_id} to user {user_id}")
