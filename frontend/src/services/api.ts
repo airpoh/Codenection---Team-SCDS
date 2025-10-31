@@ -60,7 +60,7 @@ import type {
 
 // API Base URL from environment variable
 // Falls back to localhost if not set
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://codenection-team-scds-production.up.railway.app/health';
 
 
 class ApiService {
